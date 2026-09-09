@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>國際志工知多少 - 幹部決策挑戰</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --primary-color: #2c3e50;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --swipe-up: #3498db;
+            --swipe-down: #e74c3c;
+            --swipe-left: #f39c12;
+            --swipe-right: #2ecc71;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Helvetica Neue', Arial, 'LiHei Pro', sans-serif;
+            color: var(--text-main);
+            overflow: hidden; /* 防止手機原生下拉更新 */
+            touch-action: none; /* 讓自訂手勢更順暢 */
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            position: relative;
+        }
+
+        /* 啟動與結算畫面 */
+        .screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .screen h1 { font-size: 24px; color: var(--primary-color); margin-bottom: 10px; }
+        .screen p { font-size: 16px; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 遊戲畫面 */
+        #game-screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 10px;
+        }
+
+        #progress {
+            text-align: center;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* 題目卡片 */
+        #card-container {
+            flex: 1;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .scenario-title { font-size: 18px; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .scenario-text { font-size: 16px; line-height: 1.6; }
+
+        /* 四向選項提示 */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 10px;
+            padding: 15px 5px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .opt {
+            font-size: 13px;
+            padding: 10px;
+            border-radius: 10px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .opt i { font-size: 18px; margin-right: 8px; }
+        .opt.up { background-color: var(--swipe-up); grid-column: 1 / 3; justify-content: center;}
+        .opt.left { background-color: var(--swipe-left); }
+        .opt.right { background-color: var(--swipe-right); }
+        .opt.down { background-color: var(--swipe-down); grid-column: 1 / 3; justify-content: center;}
+
+        /* 滑動提示遮罩 */
+        #swipe-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 15px;
+            transition: opacity 0.2s;
+            z-index: 20;
+        }
+
+        /* 結算分數 */
+        #final-score { font-size: 48px; color: var(--primary-color); font-weight: bold; margin: 10px 0; }
+        #final-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+        #final-desc { font-size: 16px; color: var(--text-muted); padding: 0 10px; text-align: left;}
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- 首頁 -->
+    <div id="start-screen" class="screen">
+        <h1>國際志工知多少<br>幹部決策挑戰</h1>
+        <p>這不是普通的考試，而是一場真實的海外專案模擬。面對衝突、資源短缺與文化衝擊，你會怎麼做？<br><br>👉 <b>操作方式：</b> 閱讀情境後，在螢幕上「向上、下、左、右」滑動來選擇你的應對方式。</p>
+        <button class="btn" onclick="startGame()">開始挑戰</button>
+    </div>
+
+    <!-- 遊戲頁 -->
+    <div id="game-screen">
+        <div id="progress">題目 1 / 10</div>
+        
+        <div id="card-container">
+            <div id="question-card" class="card">
+                <div class="scenario-title" id="q-title">情境載入中...</div>
+                <div class="scenario-text" id="q-text">請稍候...</div>
+                <div id="swipe-overlay"></div>
+            </div>
+        </div>
+
+        <div class="options-grid">
+            <div class="opt up" id="opt-up">👆 載入中...</div>
+            <div class="opt left" id="opt-left">👈 載入中...</div>
+            <div class="opt right" id="opt-right">👉 載入中...</div>
+            <div class="opt down" id="opt-down">👇 載入中...</div>
+        </div>
+    </div>
+
+    <!-- 結算頁 -->
+    <div id="end-screen" class="screen" style="display:none;">
+        <h1>挑戰結束！</h1>
+        <div id="final-score">0</div>
+        <div id="final-title">評估結果</div>
+        <p id="final-desc">詳細說明</p>
+        <button class="btn" onclick="location.reload()">重新挑戰</button>
+    </div>
+</div>
+
+<script>
+    // 題庫設計 (依據 TEAM, SAFE, 文化尊重, 需求評估)
+    const questions = [
+        {
+            title: "【內部衝突】壓力鍋炸開",
+            text: "距離明天活動剩12小時，負責教材的隊員A突然摔剪刀大喊：「為什麼每次都是我做？其他人憑什麼都在聊天！」氣氛瞬間降至冰點。",
+            options: {
+                up: { text: "安撫：撐過去回台再檢討分工", score: 1 },
+                down: { text: "行動：立刻重新分配剩下工作", score: 0 },
+                left: { text: "穩定：帶A離開透氣暫停十分鐘", score: 3 },
+                right: { text: "承擔：讓A休息，自己攬下來做", score: 2 }
+            }
+        },
+        {
+            title: "【文化衝突】遲到的在地夥伴",
+            text: "要求8:30集合，但8:45在地夥伴仍有一半沒到。台灣隊員小宇覺得對方不尊重，當面開嗆：「你們真的很沒效率！」",
+            options: {
+                up: { text: "制止小宇並當面向對方道歉", score: 2 },
+                down: { text: "嚴肅重申我們的時程表規範", score: 0 },
+                left: { text: "當作沒事，台灣隊員先扛工作", score: 1 },
+                right: { text: "私下拉開小宇，好奇詢問在地作息", score: 3 }
+            }
+        },
+        {
+            title: "【資源危機】暴增的需求",
+            text: "原訂100名兒童，前一晚在地夥伴說明天會有150人來，但教材只剩50人份。隊員群組炸鍋，不知如何是好。",
+            options: {
+                up: { text: "大家自掏腰包把教材材料補齊", score: 1 },
+                down: { text: "確認安全後，改玩不需材料的團康", score: 3 },
+                left: { text: "堅持原計畫，只讓100人參加", score: 0 },
+                right: { text: "50份材料讓150個孩子分組共用", score: 2 }
+            }
+        },
+        {
+            title: "【動機崩潰】疲勞與意義喪失",
+            text: "服務第四天，每天早起高溫。開會時隊員抱怨：「每天做這些很表面，孩子也沒多喜歡我們，早知道就不來了。」",
+            options: {
+                up: { text: "關心疲勞，今晚縮短開會陪伴聊天", score: 3 },
+                down: { text: "斥責隊員抗壓性太低，要求振作", score: 0 },
+                left: { text: "精神喊話強調孩子還是需要我們", score: 1 },
+                right: { text: "強制調整明天行程，全部改輕鬆玩", score: 2 }
+            }
+        },
+        {
+            title: "【突發危機】醫療狀況與任務",
+            text: "活動中一名當地孩子突然跌倒受傷，有隊員主張：「活動不能停，讓別人處理，我們繼續帶進度。」",
+            options: {
+                up: { text: "暫停活動，依SAFE原則優先處理傷患", score: 3 },
+                down: { text: "輕微受傷就算了，活動進度優先", score: 0 },
+                left: { text: "請在地夥伴全權處理，我們繼續帶", score: 2 },
+                right: { text: "叫其他人繼續帶，隊長自己去送醫", score: 1 }
+            }
+        },
+        {
+            title: "【綜合危機】完美風暴",
+            text: "最後一天早晨：車輛故障延誤一小時、一名隊員急性腸胃炎狂吐、在地夥伴臨時要加開活動。所有狀況同時發生。",
+            options: {
+                up: { text: "隊長親自跳下去把所有事情做完", score: 1 },
+                down: { text: "強制指派還清醒的隊員一人處理一件", score: 2 },
+                left: { text: "先安頓生病隊員(人)，再處理車與活動(事)", score: 3 },
+                right: { text: "壓力太大崩潰，大家一起在路邊等", score: 0 }
+            }
+        },
+        {
+            title: "【溝通落差】對效率的認知",
+            text: "台灣團隊習慣準時執行；但當地夥伴習慣活動前先花半小時跟社區長老寒暄聊天。台灣隊員覺得這是在浪費時間。",
+            options: {
+                up: { text: "不斷催促當地夥伴快點結束聊天", score: 1 },
+                down: { text: "跳過當地夥伴，台灣團隊自己開始帶", score: 0 },
+                left: { text: "觀察並加入，理解這是建立信任的方式", score: 3 },
+                right: { text: "讓他們聊，我們在旁邊休息滑手機等", score: 2 }
+            }
+        },
+        {
+            title: "【價值觀對立】士氣低落",
+            text: "資源短缺下，隊員A說：「反正孩子最後會把作品丟掉，隨便帶就好。」隊員B怒吼：「我們花那麼多時間來，不能隨便！」",
+            options: {
+                up: { text: "開會引導討論服務初衷，找回意義", score: 3 },
+                down: { text: "同意隊員A，大家開心輕鬆就好", score: 1 },
+                left: { text: "強迫大家一定要做到原本計畫的完美", score: 0 },
+                right: { text: "不管他們吵架，隊長自己一個人做到好", score: 2 }
+            }
+        },
+        {
+            title: "【突發變更】內外夾擊",
+            text: "晚上8點，當地夥伴通知明天場地被借走，活動需延後5小時。隊員聽到氣炸覺得不被尊重，同時當地夥伴在LINE上等回覆。",
+            options: {
+                up: { text: "先回覆當地OK，再回來壓制隊員怒氣", score: 1 },
+                down: { text: "跟當地夥伴大吵，強硬拒絕更改時間", score: 0 },
+                left: { text: "已讀當地夥伴，先讓隊員發洩半小時", score: 2 },
+                right: { text: "先同理隊員情緒，再回覆當地確認細節", score: 3 }
+            }
+        },
+        {
+            title: "【專案評估】明年要做什麼",
+            text: "準備明年的企劃時，學弟妹跑來問你：「到底是要先找人組隊，還是先決定我們要去當地做什麼服務需求？」",
+            options: {
+                up: { text: "看現在流行什麼就辦什麼 (如AI營隊)", score: 0 },
+                down: { text: "先分析當地利害關係人，並做需求評估", score: 3 },
+                left: { text: "直接把今年的活動企劃複製貼上", score: 1 },
+                right: { text: "先找滿人，再去問學長姐以前都玩什麼", score: 2 }
+            }
+        }
+    ];
+
+    let currentQ = 0;
+    let totalScore = 0;
+
+    // DOM Elements
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const endScreen = document.getElementById('end-screen');
+    const qTitle = document.getElementById('q-title');
+    const qText = document.getElementById('q-text');
+    const optUp = document.getElementById('opt-up');
+    const optDown = document.getElementById('opt-down');
+    const optLeft = document.getElementById('opt-left');
+    const optRight = document.getElementById('opt-right');
+    const card = document.getElementById('question-card');
+    const overlay = document.getElementById('swipe-overlay');
+    const progress = document.getElementById('progress');
+
+    function startGame() {
+        startScreen.style.display = 'none';
+        gameScreen.style.display = 'flex';
+        currentQ = 0;
+        totalScore = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQ >= questions.length) {
+            endGame();
+            return;
+        }
+        
+        card.style.transform = 'translate(0, 0)';
+        card.style.opacity = '1';
+        overlay.style.opacity = '0';
+        
+        const q = questions[currentQ];
+        progress.innerText = `任務進度 ${currentQ + 1} / ${questions.length}`;
+        qTitle.innerText = q.title;
+        qText.innerText = q.text;
+        
+        optUp.innerText = `👆 ${q.options.up.text}`;
+        optDown.innerText = `👇 ${q.options.down.text}`;
+        optLeft.innerText = `👈 ${q.options.left.text}`;
+        optRight.innerText = `👉 ${q.options.right.text}`;
+    }
+
+    function handleAnswer(direction) {
+        const q = questions[currentQ];
+        let scoreAdd = 0;
+        
+        // 設定飛出動畫與顏色
+        if(direction === 'up') { scoreAdd = q.options.up.score; card.style.transform = 'translateY(-150%)'; overlay.style.backgroundColor = 'rgba(52, 152, 219, 0.7)'; overlay.innerText = '👆'; }
+        if(direction === 'down') { scoreAdd = q.options.down.score; card.style.transform = 'translateY(150%)'; overlay.style.backgroundColor = 'rgba(231, 76, 60, 0.7)'; overlay.innerText = '👇';}
+        if(direction === 'left') { scoreAdd = q.options.left.score; card.style.transform = 'translateX(-150%)'; overlay.style.backgroundColor = 'rgba(243, 156, 18, 0.7)'; overlay.innerText = '👈';}
+        if(direction === 'right') { scoreAdd = q.options.right.score; card.style.transform = 'translateX(150%)'; overlay.style.backgroundColor = 'rgba(46, 204, 113, 0.7)'; overlay.innerText = '👉';}
+
+        overlay.style.opacity = '1';
+        card.style.opacity = '0';
+        totalScore += scoreAdd;
+        
+        setTimeout(() => {
+            currentQ++;
+            loadQuestion();
+        }, 300); // 動畫時間
+    }
+
+    function endGame() {
+        gameScreen.style.display = 'none';
+        endScreen.style.display = 'flex';
+        
+        document.getElementById('final-score').innerText = totalScore + " 分";
+        
+        let title = "";
+        let desc = "";
+        
+        if (totalScore >= 26) {
+            title = "🏆 神級領隊 (26-30分)";
+            desc = "你完美掌握了 TEAM 與 SAFE 原則！在衝突發生時，你懂得先穩定情緒、照顧團隊感受，同時不帶評價地尊重跨文化差異。跟著你出隊，大家都會覺得安心又充滿意義！";
+        } else if (totalScore >= 18) {
+            title = "⭐ 潛力幹部 (18-25分)";
+            desc = "你具備很好的危機處理意識，能解決大部分的問題。但偶爾在任務緊迫時，可能會不小心忽略了隊員深層的情緒，或是在文化溝通上稍微強勢了一點。再多一點「陪伴與好奇」，你會更強大！";
+        } else if (totalScore >= 10) {
+            title = "⚠️ 危機邊緣 (10-17分)";
+            desc = "你非常有行動力，總是急著想解決眼前的問題（做事）。但志工團隊最難的是「一起做事」，太過專注於任務進度，可能會讓你在無意間犧牲了團隊士氣或踩到當地文化地雷喔。";
+        } else {
+            title = "💣 災難製造機 (9分以下)";
+            desc = "哎呀！你的決策可能引發了嚴重的公關危機或內部背叛。記得口訣：「先穩定、再理解、後協商」。海外服務絕對不要為了任務而犧牲安全與團隊關係！";
+        }
+        
+        document.getElementById('final-title').innerText = title;
+        document.getElementById('final-desc').innerText = desc;
+    }
+
+    // 手機觸控滑動偵測邏輯
+    let startX = 0;
+    let startY = 0;
+    const threshold = 50; // 最小滑動距離
+
+    document.addEventListener('touchstart', e => {
+        startX = e.changedTouches[0].screenX;
+        startY = e.changedTouches[0].screenY;
+    }, {passive: false});
+
+    document.addEventListener('touchend', e => {
+        if(gameScreen.style.display !== 'flex') return; // 只在遊戲畫面啟用滑動
+        
+        let endX = e.changedTouches[0].screenX;
+        let endY = e.changedTouches[0].screenY;
+        
+        let diffX = endX - startX;
+        let diffY = endY - startY;
+        
+        if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // 橫向滑動
+                if (diffX > 0) handleAnswer('right');
+                else handleAnswer('left');
+            } else {
+                // 縱向滑動
+                if (diffY > 0) handleAnswer('down');
+                else handleAnswer('up');
+            }
+        }
+    });
+
+</script>
+</body>
+</html>
