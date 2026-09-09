@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>國際志工知多少 - 幹部生存戰</title>
+    <title>海外志工幹部生存戰 | Overseas Volunteer Leader Survival</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -43,6 +43,7 @@
             align-items: center;
             padding: 20px;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .screen h1 { font-size: 24px; color: var(--primary-color); margin-bottom: 10px; }
@@ -58,41 +59,18 @@
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 80%;
+            margin-bottom: 15px;
         }
 
         /* 遊戲畫面 */
-        #game-screen {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            padding: 15px;
-            box-sizing: border-box;
-        }
+        #game-screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; }
+        #progress { text-align: center; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; }
 
-        #progress {
-            text-align: center;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-        }
-
-        #card-container {
-            flex: 1;
-            position: relative;
-            z-index: 10;
-            margin-bottom: 15px;
-            min-height: 200px;
-        }
-
+        #card-container { flex: 1; position: relative; z-index: 10; margin-bottom: 15px; min-height: 200px; }
         .card {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--card-bg); border-radius: 15px; padding: 20px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1); overflow-y: auto; -webkit-overflow-scrolling: touch;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
@@ -100,36 +78,15 @@
         .scenario-text { font-size: 15px; line-height: 1.6; }
 
         /* 選項區 */
-        #swipe-zone {
-            position: relative;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 15px;
-            padding: 10px;
-            touch-action: none;
-        }
-
+        #swipe-zone { position: relative; background: rgba(255, 255, 255, 0.5); border-radius: 15px; padding: 10px; touch-action: none; }
         .swipe-hint { text-align: center; font-size: 12px; color: #888; margin-bottom: 8px; }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 10px;
-        }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
 
         .opt {
-            font-size: 14px;
-            padding: 15px 10px;
-            border-radius: 10px;
-            line-height: 1.4;
-            display: flex;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
+            font-size: 13px; padding: 12px 10px; border-radius: 10px; line-height: 1.4;
+            display: flex; align-items: center; color: white; font-weight: bold; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
         .opt:active { transform: scale(0.95); }
         .opt.up { background-color: var(--swipe-up); grid-column: 1 / 3; justify-content: center;}
         .opt.left { background-color: var(--swipe-left); }
@@ -137,32 +94,14 @@
         .opt.down { background-color: var(--swipe-down); grid-column: 1 / 3; justify-content: center;}
 
         #swipe-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 50px;
-            font-weight: bold;
-            color: white;
-            opacity: 0;
-            pointer-events: none;
-            border-radius: 15px;
-            transition: opacity 0.2s;
-            z-index: 20;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 50px; font-weight: bold; color: white; opacity: 0;
+            pointer-events: none; border-radius: 15px; transition: opacity 0.2s; z-index: 20;
         }
 
         /* 詳解畫面 */
-        #explanation-screen {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            padding: 20px;
-            background: var(--card-bg);
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-
+        #explanation-screen { display: none; flex-direction: column; height: 100%; padding: 20px; background: var(--card-bg); box-sizing: border-box; overflow-y: auto; }
         .exp-title { font-size: 20px; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; text-align: center;}
         .exp-score-box { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; margin-bottom: 20px; border-radius: 0 10px 10px 0;}
         .exp-score-item { font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
@@ -178,24 +117,32 @@
 <body>
 
 <div id="app">
+    <!-- 語言選擇頁 -->
+    <div id="language-screen" class="screen">
+        <h1>語言 / Language</h1>
+        <p style="text-align: center; margin-bottom: 40px;">請選擇您要使用的語言<br>Please select your language</p>
+        <button class="btn" onclick="setLanguage('zh')">繁體中文</button>
+        <button class="btn" onclick="setLanguage('en')">English</button>
+    </div>
+
     <!-- 首頁 -->
-    <div id="start-screen" class="screen">
-        <h1>海外志工幹部生存戰</h1>
-        <p>這是一場真實的海外專案模擬。遇到暴走隊員、雷包夥伴或突發危機，你的每一個決定，都在考驗你對「優先順序」的判斷。<br><br>👉 <b>規則：</b> 請在四個看似都有道理的選項中，選出最適合當下情境的處置方式。滑動選項或直接點擊皆可作答。</p>
-        <button class="btn" onclick="startGame()">開始挑戰</button>
+    <div id="start-screen" class="screen" style="display:none;">
+        <h1 id="ui-title">載入中...</h1>
+        <p id="ui-desc">載入中...</p>
+        <button class="btn" id="ui-start-btn" onclick="startGame()">開始</button>
     </div>
 
     <!-- 遊戲頁 -->
     <div id="game-screen">
-        <div id="progress">第 1 / 10 題</div>
+        <div id="progress">1 / 8</div>
         <div id="card-container">
             <div id="question-card" class="card">
-                <div class="scenario-title" id="q-title">載入中...</div>
-                <div class="scenario-text" id="q-text">請稍候...</div>
+                <div class="scenario-title" id="q-title"></div>
+                <div class="scenario-text" id="q-text"></div>
             </div>
         </div>
         <div id="swipe-zone">
-            <div class="swipe-hint">💡 點擊選項，或在方塊區滑動作答</div>
+            <div class="swipe-hint" id="ui-hint">💡 點擊選項或在方塊區滑動</div>
             <div class="options-grid">
                 <div class="opt up" id="opt-up" onclick="handleAnswer('up')">👆 </div>
                 <div class="opt left" id="opt-left" onclick="handleAnswer('left')">👈 </div>
@@ -208,9 +155,9 @@
 
     <!-- 詳解頁 -->
     <div id="explanation-screen">
-        <div class="exp-title">決策解析</div>
+        <div class="exp-title" id="ui-exp-title">決策解析</div>
         <div class="exp-score-box">
-            <div class="exp-my-choice" id="exp-my-choice">你的選擇：</div>
+            <div class="exp-my-choice" id="exp-my-choice"></div>
             <div class="exp-score-item" id="exp-s-up"></div>
             <div class="exp-score-item" id="exp-s-down"></div>
             <div class="exp-score-item" id="exp-s-left"></div>
@@ -218,152 +165,271 @@
         </div>
         <div class="exp-text" id="exp-content"></div>
         <div style="text-align: center;">
-            <button class="btn" onclick="nextQuestion()">下一題</button>
+            <button class="btn" id="ui-next-btn" onclick="nextQuestion()">下一題</button>
         </div>
     </div>
 
     <!-- 結算頁 -->
     <div id="end-screen" class="screen" style="display:none;">
-        <h1>評估結果</h1>
+        <h1 id="ui-end-title">評估結果</h1>
         <div id="final-score">0</div>
-        <div id="final-title">載入中...</div>
-        <p id="final-desc">載入中...</p>
-        <button class="btn" onclick="location.reload()">重新挑戰</button>
+        <div id="final-title"></div>
+        <p id="final-desc"></p>
+        <button class="btn" id="ui-retry-btn" onclick="location.reload()">重新挑戰</button>
     </div>
 </div>
 
 <script>
-    const questions = [
-        {
-            title: "倒數12小時的剪刀手",
-            text: "距離明天活動剩12小時。負責整理教材的隊員A突然把剪刀一摔，崩潰大喊：「為什麼每次都是我跟B在做？其他人憑什麼都在聊天！」C回嘴：「可是你們動作比較快啊。」現場氣氛降到冰點。身為幹部，你開口的第一句話會是什麼？",
-            options: {
-                up: { text: "大家先安靜，我們現在立刻重新分配剩下的工作。", score: 0 },
-                down: { text: "A，你先放下剪刀跟我到外面走走。大家先休息十分鐘。", score: 3 },
-                left: { text: "A，你現在覺得很不公平對嗎？我們來談談。", score: 2 },
-                right: { text: "C，請你先不要說話。A你先去旁邊休息，我來做。", score: 1 }
+    const i18n = {
+        zh: {
+            ui: {
+                title: "海外志工幹部生存戰",
+                desc: "這是一場真實的海外專案模擬。遇到暴走隊員、雷包夥伴或突發危機，你的每一個決定，都在考驗你對「優先順序」的判斷。<br><br>👉 <b>規則：</b> 請在四個看似都有道理的選項中，選出最適合當下的處置方式。滑動選項或直接點擊皆可作答。",
+                startBtn: "開始挑戰",
+                hint: "💡 點擊選項，或在方塊區滑動作答",
+                expTitle: "決策解析",
+                yourChoice: "你的選擇",
+                nextBtn: "下一題",
+                endTitle: "評估結果",
+                retryBtn: "重新挑戰",
+                pts: "分"
             },
-            explanation: "【先穩定 ➔ 再理解】\n在極端高壓下發生情緒爆發，最危險的不是「教材做不完」，而是「人際與情緒」。直接切入分配工作(0分)只會引發防衛心；當面探討情緒(2分)容易讓當事人下不了台；直接護航(1分)會產生新的對立。\n最佳解是「中斷高壓環境」，先把人帶離現場降溫，穩定後再來協商。"
+            questions: [
+                {
+                    title: "倒數12小時的剪刀手",
+                    text: "距離明天活動剩12小時。負責整理教材的隊員A突然把剪刀一摔，崩潰大喊：「為什麼每次都是我跟B在做？其他人憑什麼都在聊天！」C回嘴：「可是你們動作比較快啊。」現場氣氛降到冰點。身為幹部，你開口的第一句話會是什麼？",
+                    options: {
+                        up: { text: "大家先安靜，我們現在立刻重新分配剩下的工作。", score: 0 },
+                        down: { text: "A，你先放下剪刀跟我到外面走走。大家先休息十分鐘。", score: 3 },
+                        left: { text: "A，你現在覺得很不公平對嗎？我們來談談。", score: 2 },
+                        right: { text: "C，請你先不要說話。A你先去旁邊休息，我來做。", score: 1 }
+                    },
+                    explanation: "【先穩定 ➔ 再理解】\n在極端高壓下發生情緒爆發，最危險的不是「教材做不完」，而是「人際與情緒」。直接切入分配工作(0分)只會引發防衛心；當面探討情緒(2分)容易讓當事人下不了台；直接護航(1分)會產生新的對立。\n最佳解是「中斷高壓環境」，先把人帶離現場降溫，穩定後再來協商。"
+                },
+                {
+                    title: "早晨7:30的完美風暴",
+                    text: "海外服務最後一天早上，四個狀況同時發生：\n① 隊員突發急性腸胃炎狂吐\n② 司機通知車壞了要等1小時\n③ 當地夥伴打來要求加開30人活動\n④ 另一名隊員崩潰大哭說不想幹了\n請問你「最優先」的動作是什麼？",
+                    options: {
+                        up: { text: "馬上安撫崩潰的隊員，避免團隊士氣全面瓦解。", score: 2 },
+                        down: { text: "回絕當地夥伴，告訴他們我們現在遇到大麻煩了。", score: 1 },
+                        left: { text: "召集還清醒的人緊急站會，一人認領一件事情去處理。", score: 0 },
+                        right: { text: "立刻把腸胃炎隊員帶去旁邊確認生命徵象與就醫路線。", score: 3 }
+                    },
+                    explanation: "【資源排序：安全絕對優先】\n危機處理的第一口訣是 S(安全)。人員生病屬於實質的醫療與安全風險，絕對優先於「團隊情緒(人)」、「外部關係(關係)」與「活動進度(任務)」。在確保醫療安全前，開會分工只會延誤救援時機。"
+                },
+                {
+                    title: "被消失的歲數",
+                    text: "團隊在當地進行健康檢查建檔。但當地夥伴總是不願填寫表單上的「年齡」欄位，隊員跑來跟你抱怨：「他們真的很沒效率又不受控，這會導致我們數據報表無法連貫。」",
+                    options: {
+                        up: { text: "告訴隊員，用目測身高來推估年齡填上去就好。", score: 1 },
+                        down: { text: "去找當地夥伴，堅持這是合約規範，一定要問到歲數。", score: 0 },
+                        left: { text: "私下問當地夥伴：「請問你們平時是怎麼記錄孩子成長的？」", score: 3 },
+                        right: { text: "把年齡欄位直接刪掉，但私下抱怨當地人很難溝通。", score: 2 }
+                    },
+                    explanation: "【好奇取代評價】\n很多我們覺得理所當然的事（例如知道自己幾歲），在當地可能根本沒有這個概念。用目測(1分)或強求(0分)都是把自身文化強加於人。最好的方式是帶著「好奇心」去理解在地脈絡，找出他們原本的運作方式。"
+                },
+                {
+                    title: "資源枯竭的對立",
+                    text: "由於預算控管失誤，活動材料少了三分之一。隊員X提議：「反正當地孩子最後也會把作品丟掉，簡單帶過就好。」隊員Y聽了暴怒：「我們準備這麼久，不能半途而廢！」",
+                    options: {
+                        up: { text: "引導雙方討論我們來這裡服務的初衷，找回意義。", score: 1 },
+                        down: { text: "斥責X的態度不正確，我們應該自掏腰包買齊材料。", score: 0 },
+                        left: { text: "緊急修改教案，降低每個人的材料使用量，確保大家都能玩到。", score: 3 },
+                        right: { text: "把材料集中給表現比較好的孩子，其他人用畫畫代替。", score: 2 }
+                    },
+                    explanation: "【任務品質 vs 核心精神】\n資源不足不代表活動失敗。當下的重點是「解決事」，空談初衷(1分)緩不濟急，自掏腰包(0分)剝削團隊。幹部應果斷犧牲「活動的精緻度(品質)」，來確保「所有孩子都能參與(核心任務)」。"
+                },
+                {
+                    title: "遲到的 8:45",
+                    text: "我們習慣：準時集合 ➔ 快速分工 ➔ 立即執行。但要求8:30集合，到了8:45，當地夥伴還在悠哉地跟社區長輩喝茶聊天。台灣隊員覺得這是在浪費時間，怒氣值正在上升。",
+                    options: {
+                        up: { text: "嚴肅地向當地負責人重申我們的時間表與效率要求。", score: 0 },
+                        down: { text: "安撫隊員，自己走過去坐下來，接過茶杯加入聊天。", score: 3 },
+                        left: { text: "跳過當地夥伴，指揮台灣團隊自己先開始動手做。", score: 1 },
+                        right: { text: "請隊員去旁邊滑手機休息，等他們聊完再叫我們。", score: 2 }
+                    },
+                    explanation: "【跨文化理解與在地尊重】\n在許多地方，活動前的「閒聊」是確認家庭狀況、建立信任的重要儀式，不是沒效率。強押時間表(0分)或自己蠻幹(1分)都會破壞深層的權力與信任關係。放下成見融入其中，才是真正與在地協作。"
+                },
+                {
+                    title: "場地突發被借走",
+                    text: "晚上8點，當地夥伴傳 LINE 通知：「明天場地被村長借走，活動必須延後到下午。」隊員聽到後氣炸覺得不被尊重。此時當地夥伴正在線上等你回覆。",
+                    options: {
+                        up: { text: "先跟隊員說：「大家先發洩十分鐘，我懂這很煩。」", score: 3 },
+                        down: { text: "立刻回覆當地夥伴：「沒問題，我們會配合。」再回頭安撫隊員。", score: 1 },
+                        left: { text: "回覆當地夥伴：「這違反合約，請你們去跟村長協調。」", score: 0 },
+                        right: { text: "先同理隊員情緒，但要求大家立刻開會想出下午的備案。", score: 2 }
+                    },
+                    explanation: "【內部情緒優先於外部回應】\n當內部強烈的情緒爆發時，如果幹部第一時間選擇「妥協於外部(1分)」，隊員會覺得被背叛，產生內部對立。必須先接住隊員的情緒(提供情緒價值)，穩定後再進行外部協商。"
+                },
+                {
+                    title: "服務對象的擴展",
+                    text: "專案前期評估時，學弟妹跑來問你：「學長，我們去那邊帶國小生辦活動，但我們走後他們就沒人帶了，這樣真的有意義嗎？」",
+                    options: {
+                        up: { text: "「志工本來就是做自己開心的，盡力就好，不要想太多。」", score: 0 },
+                        down: { text: "「或許我們可以評估，把部分服務對象擴展到當地的『老師』。」", score: 3 },
+                        left: { text: "「所以我們要把活動辦得更精緻，讓他們一輩子難忘。」", score: 1 },
+                        right: { text: "「我們可以多留一些文具跟物資給他們，彌補遺憾。」", score: 2 }
+                    },
+                    explanation: "【專案需求評估與延續性】\n服務專案不能只靠熱情。表單數據與「延續性」比單次活動重要。要擴大打擊面，服務對象不一定只能是學生，培力在地教師或關鍵利害關係人，才是讓專案長久落地的關鍵。"
+                },
+                {
+                    title: "突發意外的底線",
+                    text: "大地遊戲中，一名孩子跌倒流血。隊員表示：「活動不能停，讓別人扶他去旁邊就好，我們繼續帶進度。」但你不知道最近的醫院在哪，當地夥伴也狀況外。",
+                    options: {
+                        up: { text: "同意隊員，活動繼續，避免現場上百個孩子失控。", score: 0 },
+                        down: { text: "先暫停活動，穩定現場，並立刻向當地確認可靠的就醫資訊。", score: 3 },
+                        left: { text: "請在地夥伴全權負責處理，我們專心把任務執行完畢。", score: 1 },
+                        right: { text: "強制取消後面所有行程，直到受傷事件釐清為止。", score: 2 }
+                    },
+                    explanation: "【絕對不要為了任務犧牲安全】\n當「任務進度」與「潛在安全風險」發生衝突時，底線永遠是安全。即便只有一個人受傷，在未確認可靠醫療資訊與擬定下一步之前，盲目推進活動(0分、1分)是嚴重的失職。"
+                }
+            ],
+            results: [
+                { min: 21, title: "🏆 神級掌舵手 (21-24分)", desc: "太強了！你在極端壓力下依然能清晰判斷「安全➔核心➔品質」的優先順序。你懂得中斷高壓穩定情緒，並用強大的文化包容力建立信任。跟你出隊，再大的風暴都能平安度過！" },
+                { min: 15, title: "⭐ 潛力危機處理者 (15-20分)", desc: "你具備很好的大局觀，能解決大部分的問題。但偶爾在遇到突發狀況時，還是會不小心陷入「先處理事，忘記處理人」的盲點，或者在文化溝通上稍微急躁了一些。再多一點好奇與陪伴，你會更無敵！" },
+                { min: 9, title: "⚠️ 燃燒殆盡的隊長 (9-14分)", desc: "你非常有責任感，總是急著想把任務達成。但請記住，團隊最難的不是「做事」而是「一起做事」。太過執著於計畫進度，可能會讓你在無意間引發隊員的情緒爆炸，甚至踩到當地文化地雷喔。" },
+                { min: 0, title: "💣 炎上製造機 (8分以下)", desc: "哎呀！你的決策可能已經讓團隊士氣瓦解，甚至引發了嚴重的公關與安全危機。海外服務切記：絕對不要為了任務而犧牲安全與關係！遇到衝突，請在心裡默念三次：「先穩定、再理解、後協商」。" }
+            ]
         },
-        {
-            title: "早晨7:30的完美風暴",
-            text: "海外服務最後一天早上，四個狀況同時發生：\n① 隊員突發急性腸胃炎狂吐\n② 司機通知車壞了要等1小時\n③ 當地夥伴打來要求加開30人活動\n④ 另一名隊員崩潰大哭說不想幹了\n請問你「最優先」的動作是什麼？",
-            options: {
-                up: { text: "馬上安撫崩潰的隊員，避免團隊士氣全面瓦解。", score: 2 },
-                down: { text: "回絕當地夥伴，告訴他們我們現在遇到大麻煩了。", score: 1 },
-                left: { text: "召集還清醒的人緊急站會，一人認領一件事情去處理。", score: 0 },
-                right: { text: "立刻把腸胃炎隊員帶去旁邊確認生命徵象與就醫路線。", score: 3 }
+        en: {
+            ui: {
+                title: "Overseas Volunteer Leader Survival",
+                desc: "This is a realistic project simulation. Facing emotional teammates, unpredictable partners, and sudden crises, every decision tests your ability to prioritize.<br><br>👉 <b>Rule:</b> Choose the most appropriate action from four seemingly reasonable options. Tap or swipe to answer.",
+                startBtn: "Start Challenge",
+                hint: "💡 Tap an option or swipe in this box",
+                expTitle: "Decision Analysis",
+                yourChoice: "Your Choice",
+                nextBtn: "Next Question",
+                endTitle: "Assessment Result",
+                retryBtn: "Play Again",
+                pts: "pts"
             },
-            explanation: "【資源排序：安全絕對優先】\n危機處理的第一口訣是 S(安全)。人員生病屬於實質的醫療與安全風險，絕對優先於「團隊情緒(人)」、「外部關係(關係)」與「活動進度(任務)」。在確保醫療安全前，開會分工只會延誤救援時機。"
-        },
-        {
-            title: "被消失的歲數",
-            text: "團隊在當地進行健康檢查建檔。但當地夥伴總是不願填寫表單上的「年齡」欄位，隊員跑來跟你抱怨：「他們真的很沒效率又不受控，這會導致我們數據報表無法連貫。」",
-            options: {
-                up: { text: "告訴隊員，用目測身高來推估年齡填上去就好。", score: 1 },
-                down: { text: "去找當地夥伴，堅持這是合約規範，一定要問到歲數。", score: 0 },
-                left: { text: "私下問當地夥伴：「請問你們平時是怎麼記錄孩子成長的？」", score: 3 },
-                right: { text: "把年齡欄位直接刪掉，但私下抱怨當地人很難溝通。", score: 2 }
-            },
-            explanation: "【好奇取代評價】\n很多我們覺得理所當然的事（例如知道自己幾歲），在當地可能根本沒有這個概念。用目測(1分)或強求(0分)都是把自身文化強加於人。最好的方式是帶著「好奇心」去理解在地脈絡，找出他們原本的運作方式。"
-        },
-        {
-            title: "資源枯竭的對立",
-            text: "由於預算控管失誤，活動材料少了三分之一。隊員X提議：「反正當地孩子最後也會把作品丟掉，簡單帶過就好。」隊員Y聽了暴怒：「我們準備這麼久，不能半途而廢！」",
-            options: {
-                up: { text: "引導雙方討論我們來這裡服務的初衷，找回意義。", score: 1 },
-                down: { text: "斥責X的態度不正確，我們應該自掏腰包買齊材料。", score: 0 },
-                left: { text: "緊急修改教案，降低每個人的材料使用量，確保大家都能玩到。", score: 3 },
-                right: { text: "把材料集中給表現比較好的孩子，其他人用畫畫代替。", score: 2 }
-            },
-            explanation: "【任務品質 vs 核心精神】\n資源不足不代表活動失敗。當下的重點是「解決事」，空談初衷(1分)緩不濟急，自掏腰包(0分)剝削團隊。幹部應果斷犧牲「活動的精緻度(品質)」，來確保「所有孩子都能參與(核心任務)」。"
-        },
-        {
-            title: "遲到的 8:45",
-            text: "我們習慣：準時集合 ➔ 快速分工 ➔ 立即執行。但要求8:30集合，到了8:45，當地夥伴還在悠哉地跟社區長輩喝茶聊天。台灣隊員覺得這是在浪費時間，怒氣值正在上升。",
-            options: {
-                up: { text: "嚴肅地向當地負責人重申我們的時間表與效率要求。", score: 0 },
-                down: { text: "安撫隊員，自己走過去坐下來，接過茶杯加入聊天。", score: 3 },
-                left: { text: "跳過當地夥伴，指揮台灣團隊自己先開始動手做。", score: 1 },
-                right: { text: "請隊員去旁邊滑手機休息，等他們聊完再叫我們。", score: 2 }
-            },
-            explanation: "【跨文化理解與在地尊重】\n在許多地方，活動前的「閒聊」是確認家庭狀況、建立信任的重要儀式，不是沒效率。強押時間表(0分)或自己蠻幹(1分)都會破壞深層的權力與信任關係。放下成見融入其中，才是真正與在地協作。"
-        },
-        {
-            title: "場地突發被借走",
-            text: "晚上8點，當地夥伴傳 LINE 通知：「明天場地被村長借走，活動必須延後到下午。」隊員聽到後氣炸：「又改！他們到底有沒有把我們當一回事？」此時當地夥伴正在線上等你回覆。",
-            options: {
-                up: { text: "先跟隊員說：「大家先發洩十分鐘，我懂這很煩。」", score: 3 },
-                down: { text: "立刻回覆當地夥伴：「沒問題，我們會配合。」再回頭安撫隊員。", score: 1 },
-                left: { text: "回覆當地夥伴：「這違反合約，請你們去跟村長協調。」", score: 0 },
-                right: { text: "先同理隊員情緒，但要求大家立刻開會想出下午的備案。", score: 2 }
-            },
-            explanation: "【內部情緒優先於外部回應】\n當內部強烈的情緒（被剝奪感、疲勞）爆發時，如果幹部第一時間選擇「妥協於外部(1分)」，隊員會覺得被背叛，產生內部對立。必須先接住隊員的情緒(提供情緒價值)，穩定後再進行外部協商。"
-        },
-        {
-            title: "好心辦壞事",
-            text: "在印度育幼院，一名隊員覺得小孩太可愛，主動過去將孩子抱起來。結果孩子不慎撞到受傷，旁邊的當地人臉色大變，氣氛瞬間變得非常緊繃。",
-            options: {
-                up: { text: "立刻請隊員放下孩子並道歉，確保我們不再觸碰當地孩童。", score: 3 },
-                down: { text: "趕緊跟當地人解釋，在台灣擁抱是表達愛與善意的方式。", score: 0 },
-                left: { text: "隊長親自介入幫孩子檢查傷口，展現我們負責的態度。", score: 2 },
-                right: { text: "裝作沒事，快速把隊員帶離現場，避免衝突擴大。", score: 1 }
-            },
-            explanation: "【放下理所當然的善意】\n行為背後隱藏著深層的權力關係與責任。我們不能用自己的文化（覺得抱小孩是善意）先入為主去合理化行為(0分)。當發生冒犯或受傷時，停止干預、尊重在地處置方式是最基本的底線。"
-        },
-        {
-            title: "服務對象的擴展",
-            text: "專案前期評估時，學弟妹跑來問你：「學長，我們去那邊帶國小生辦活動，但我們走後他們就沒人帶了，這樣真的有意義嗎？」",
-            options: {
-                up: { text: "「志工本來就是做自己開心的，盡力就好，不要想太多。」", score: 0 },
-                down: { text: "「或許我們可以評估，把部分服務對象擴展到當地的『老師』。」", score: 3 },
-                left: { text: "「所以我們要把活動辦得更精緻，讓他們一輩子難忘。」", score: 1 },
-                right: { text: "「我們可以多留一些文具跟物資給他們，彌補遺憾。」", score: 2 }
-            },
-            explanation: "【專案需求評估與延續性】\n服務專案不能只靠熱情。表單數據與「延續性」比單次活動重要。要擴大打擊面，服務對象不一定只能是學生，培力在地教師或關鍵利害關係人，才是讓專案長久落地的關鍵。"
-        },
-        {
-            title: "不想努力的夜晚",
-            text: "海外行程進入第四天，每天早起、酷熱、語言不通。開會時有隊員癱在椅子上說：「我真的覺得好累，我們做這些很表面，早知道不要來了。」",
-            options: {
-                up: { text: "「再撐一下，只剩三天了，大家打起精神！」", score: 0 },
-                down: { text: "「你們當初面試進來時的初衷是什麼？現在就忘記了嗎？」", score: 1 },
-                left: { text: "「我知道大家到了極限。明天的晨會取消，大家多睡一小時。」", score: 3 },
-                right: { text: "「既然這麼累，明天活動我們全部改成自由活動。」", score: 2 }
-            },
-            explanation: "【從控制轉為陪伴】\n幹部的應對心法：不要只對隊員說「再撐一下」(0分)或用大道理情勒(1分)。應給予真實的感受、適時「調整工作負荷」，給予情緒價值並增加他們的自主權，才能真正重建團隊意義。"
-        },
-        {
-            title: "突發意外的底線",
-            text: "大地遊戲中，一名孩子跌倒流血。隊員表示：「活動不能停，讓別人扶他去旁邊就好，我們繼續帶進度。」但你不知道最近的醫院在哪，當地夥伴也狀況外。",
-            options: {
-                up: { text: "同意隊員，活動繼續，避免現場上百個孩子失控。", score: 0 },
-                down: { text: "先暫停活動，穩定現場，並立刻向當地人確認可靠的就醫資訊。", score: 3 },
-                left: { text: "請在地夥伴全權負責處理，我們專心把任務執行完畢。", score: 1 },
-                right: { text: "強制取消後面所有行程，直到受傷事件釐清為止。", score: 2 }
-            },
-            explanation: "【絕對不要為了任務犧牲安全】\n當「任務進度」與「潛在安全風險」發生衝突時，底線永遠是安全。即便只有一個人受傷，在未確認可靠醫療資訊(F)與擬定下一步(E)之前，盲目推進活動(0分、1分)是嚴重的失職。"
+            questions: [
+                {
+                    title: "The Scissors at T-minus 12 Hours",
+                    text: "12 hours until the event. Teammate A, organizing materials, suddenly throws down the scissors and yells: 'Why is it always me and B working while others just chat?' C replies: 'Because you guys are faster.' The atmosphere freezes. As the leader, what is your FIRST response?",
+                    options: {
+                        up: { text: "Everyone quiet. Let's immediately reassign the remaining work.", score: 0 },
+                        down: { text: "A, put the scissors down and walk outside with me. Everyone, 10-minute break.", score: 3 },
+                        left: { text: "A, you feel this is very unfair right now, don't you? Let's talk.", score: 2 },
+                        right: { text: "C, please don't speak. A, go rest, I will finish the work.", score: 1 }
+                    },
+                    explanation: "[First Stabilize ➔ Then Understand]\nUnder extreme stress, the biggest risk is not 'unfinished tasks' but 'interpersonal emotions'. Reassigning work immediately (0 pts) triggers defensiveness; discussing feelings publicly (2 pts) causes embarrassment. The best solution is to interrupt the high-stress environment, take the person away to cool down, and negotiate later."
+                },
+                {
+                    title: "The 7:30 AM Perfect Storm",
+                    text: "Last morning of service. Four things happen at once:\n1. A teammate gets acute gastroenteritis and is vomiting.\n2. The driver says the bus broke down (1hr delay).\n3. Local partners call demanding an extra activity for 30 kids.\n4. Another teammate breaks down crying and wants to quit.\nWhat is your ABSOLUTE priority?",
+                    options: {
+                        up: { text: "Comfort the crying teammate to prevent total morale collapse.", score: 2 },
+                        down: { text: "Reject the local partner, explaining we are in big trouble.", score: 1 },
+                        left: { text: "Hold an emergency meeting to assign tasks to awake members.", score: 0 },
+                        right: { text: "Immediately isolate the sick teammate, check vitals, and plan medical transport.", score: 3 }
+                    },
+                    explanation: "[Resource Prioritization: Safety First]\nThe core crisis management rule is Safety. Illness is a real medical risk, taking absolute priority over 'team emotions', 'external relationships', and 'task progress'. Having a meeting (0 pts) delays critical rescue time."
+                },
+                {
+                    title: "The Missing Age",
+                    text: "During health checks, local partners refuse to fill in the 'Age' column. Your teammate complains: 'They are so inefficient and uncontrollable. Our data reports will be ruined.'",
+                    options: {
+                        up: { text: "Tell the team to just estimate the age by height and fill it in.", score: 1 },
+                        down: { text: "Go to the local partner and insist this is a contract requirement.", score: 0 },
+                        left: { text: "Privately ask the locals: 'How do you usually track children's growth here?'", score: 3 },
+                        right: { text: "Delete the age column, but complain privately about the locals.", score: 2 }
+                    },
+                    explanation: "[Curiosity Over Judgment]\nThings we take for granted (like knowing one's age) might not exist locally. Estimating (1 pt) or forcing it (0 pts) imposes your culture on them. The best approach is using 'curiosity' to understand their local context and existing systems."
+                },
+                {
+                    title: "Conflict Over Depleted Resources",
+                    text: "Due to a budget error, materials are short by 1/3. Teammate X says: 'Kids will throw the crafts away anyway, just do a sloppy version.' Teammate Y explodes: 'We prepared so hard, we can't half-ass this!'",
+                    options: {
+                        up: { text: "Guide them to discuss our original intention of volunteering to find meaning.", score: 1 },
+                        down: { text: "Scold X and demand the team pay out of pocket for more materials.", score: 0 },
+                        left: { text: "Urgently modify the lesson plan, reducing material per kid so all can play.", score: 3 },
+                        right: { text: "Give materials to the best-behaved kids; the rest can just draw.", score: 2 }
+                    },
+                    explanation: "[Quality vs. Core Mission]\nResource shortage doesn't mean failure. The priority is 'solving the problem'. Talking about intentions (1 pt) is too slow; paying out of pocket (0 pts) exploits the team. A leader should sacrifice 'activity refinement (Quality)' to ensure 'all children can participate (Core Mission)'."
+                },
+                {
+                    title: "The 8:45 AM Tardiness",
+                    text: "We expect: Gather on time ➔ Assign ➔ Execute. Meeting time was 8:30. At 8:45, local partners are still casually drinking tea with community elders. The Taiwan team feels this is a waste of time and is getting angry.",
+                    options: {
+                        up: { text: "Strictly reiterate our schedule and efficiency requirements to the locals.", score: 0 },
+                        down: { text: "Calm the team, walk over, sit down, and join the tea chat.", score: 3 },
+                        left: { text: "Ignore the locals and command the Taiwan team to start working alone.", score: 1 },
+                        right: { text: "Tell the team to rest and use their phones until the locals finish chatting.", score: 2 }
+                    },
+                    explanation: "[Cultural Respect]\nIn many places, 'small talk' before an event is a crucial ritual to build trust, not inefficiency. Forcing schedules (0 pts) or acting alone (1 pt) destroys underlying trust. Dropping prejudice and blending in is true local collaboration."
+                },
+                {
+                    title: "Sudden Venue Requisition",
+                    text: "At 8 PM, local partners text: 'The village chief took the venue for tomorrow. Activity must be delayed until afternoon.' Your team is furious about the disrespect. The local partner is waiting online for your reply.",
+                    options: {
+                        up: { text: "Tell the team: 'Vent for 10 mins, I know this is super annoying.'", score: 3 },
+                        down: { text: "Reply 'No problem' to locals immediately, then pacify the team.", score: 1 },
+                        left: { text: "Reply: 'This breaks the contract, go negotiate with the chief.'", score: 0 },
+                        right: { text: "Empathize with the team, but demand an immediate backup plan meeting.", score: 2 }
+                    },
+                    explanation: "[Internal Emotions > External Response]\nWhen intense internal emotions (fatigue, feeling deprived) erupt, compromising externally first (1 pt) makes the team feel betrayed. You must catch the team's emotions first (provide emotional value), stabilize them, and then handle external negotiations."
+                },
+                {
+                    title: "Expanding the Target Audience",
+                    text: "During project prep, a junior asks: 'We run camps for elementary kids, but when we leave, nobody guides them. Is this really meaningful?'",
+                    options: {
+                        up: { text: "'Volunteering is just about doing our best and having fun, don't overthink it.'", score: 0 },
+                        down: { text: "'Maybe we can evaluate expanding our service to empower the local teachers.'", score: 3 },
+                        left: { text: "'That's why we need to make the camp so exquisite they remember it forever.'", score: 1 },
+                        right: { text: "'We can leave more stationery and supplies behind to compensate.'", score: 2 }
+                    },
+                    explanation: "[Needs Assessment & Continuity]\nService projects can't run on passion alone. 'Continuity' is more important than a single event. Empowering local teachers or key stakeholders is the crucial step to ensure the project has a lasting, sustainable impact."
+                },
+                {
+                    title: "The Bottom Line of Emergencies",
+                    text: "During a field game, a child falls and bleeds. A teammate says: 'The game can't stop. Let someone else help him, we must continue the schedule.' You don't know where the nearest hospital is, and local partners seem confused.",
+                    options: {
+                        up: { text: "Agree. Continue the game to prevent hundreds of kids from losing control.", score: 0 },
+                        down: { text: "Pause the game, stabilize the scene, and demand reliable medical info from locals.", score: 3 },
+                        left: { text: "Let local partners handle it entirely while we focus on finishing our tasks.", score: 1 },
+                        right: { text: "Force-cancel all remaining schedules until the injury is fully investigated.", score: 2 }
+                    },
+                    explanation: "[Never Sacrifice Safety for Tasks]\nWhen 'task progress' conflicts with 'potential safety risks', the bottom line is ALWAYS safety. Even if it's just one injury, blindly pushing the activity forward (0 pts, 1 pt) without confirming reliable medical information and determining the next steps is a severe dereliction of duty."
+                }
+            ],
+            results: [
+                { min: 21, title: "🏆 God-Tier Helmsman (21-24 pts)", desc: "Amazing! Under extreme pressure, you clearly prioritize 'Safety ➔ Core ➔ Quality'. You know how to interrupt high stress to stabilize emotions and use strong cultural tolerance to build trust. Anyone would feel safe and purposeful on your team!" },
+                { min: 15, title: "⭐ Potential Crisis Manager (15-20 pts)", desc: "You have a great big-picture view and can solve most problems. However, in emergencies, you might fall into the trap of 'fixing the task, forgetting the people', or act slightly too hasty in cultural communication. A bit more empathy and curiosity will make you invincible!" },
+                { min: 9, title: "⚠️ Burned-Out Captain (9-14 pts)", desc: "You are highly responsible and eager to complete tasks. But remember, the hardest part of a team isn't 'working', it's 'working TOGETHER'. Obsessing over schedule progress might unintentionally trigger emotional explosions in your team or step on cultural landmines." },
+                { min: 0, title: "💣 PR Disaster Generator (0-8 pts)", desc: "Oh no! Your decisions likely caused team morale collapse or severe safety/PR crises. Remember: NEVER sacrifice safety and relationships for the sake of tasks! When conflict arises, chant this 3 times: 'First Stabilize, Then Understand, Finally Negotiate'." }
+            ]
         }
-    ];
+    };
 
+    let currentLang = 'zh';
     let currentQ = 0;
     let totalScore = 0;
     let selectedScore = 0;
 
+    const languageScreen = document.getElementById('language-screen');
     const startScreen = document.getElementById('start-screen');
     const gameScreen = document.getElementById('game-screen');
     const explanationScreen = document.getElementById('explanation-screen');
     const endScreen = document.getElementById('end-screen');
     
-    const qTitle = document.getElementById('q-title');
-    const qText = document.getElementById('q-text');
-    const optUp = document.getElementById('opt-up');
-    const optDown = document.getElementById('opt-down');
-    const optLeft = document.getElementById('opt-left');
-    const optRight = document.getElementById('opt-right');
-    const card = document.getElementById('question-card');
-    const overlay = document.getElementById('swipe-overlay');
-    const progress = document.getElementById('progress');
+    function setLanguage(lang) {
+        currentLang = lang;
+        const dict = i18n[lang].ui;
+        
+        document.getElementById('ui-title').innerText = dict.title;
+        document.getElementById('ui-desc').innerHTML = dict.desc;
+        document.getElementById('ui-start-btn').innerText = dict.startBtn;
+        document.getElementById('ui-hint').innerText = dict.hint;
+        document.getElementById('ui-exp-title').innerText = dict.expTitle;
+        document.getElementById('ui-next-btn').innerText = dict.nextBtn;
+        document.getElementById('ui-end-title').innerText = dict.endTitle;
+        document.getElementById('ui-retry-btn').innerText = dict.retryBtn;
+        
+        languageScreen.style.display = 'none';
+        startScreen.style.display = 'flex';
+    }
 
     function startGame() {
         startScreen.style.display = 'none';
@@ -374,29 +440,35 @@
     }
 
     function loadQuestion() {
+        const questions = i18n[currentLang].questions;
         if (currentQ >= questions.length) {
             endGame();
             return;
         }
         
+        const card = document.getElementById('question-card');
+        const overlay = document.getElementById('swipe-overlay');
         card.style.transform = 'translate(0, 0)';
         card.style.opacity = '1';
         overlay.style.opacity = '0';
         
         const q = questions[currentQ];
-        progress.innerText = `第 ${currentQ + 1} / ${questions.length} 題`;
-        qTitle.innerText = q.title;
-        qText.innerText = q.text;
+        let qPrefix = currentLang === 'zh' ? `第 ${currentQ + 1} / ${questions.length} 題` : `Question ${currentQ + 1} / ${questions.length}`;
+        document.getElementById('progress').innerText = qPrefix;
+        document.getElementById('q-title').innerText = q.title;
+        document.getElementById('q-text').innerText = q.text;
         
-        optUp.innerText = `👆 ${q.options.up.text}`;
-        optDown.innerText = `👇 ${q.options.down.text}`;
-        optLeft.innerText = `👈 ${q.options.left.text}`;
-        optRight.innerText = `👉 ${q.options.right.text}`;
+        document.getElementById('opt-up').innerText = `👆 ${q.options.up.text}`;
+        document.getElementById('opt-down').innerText = `👇 ${q.options.down.text}`;
+        document.getElementById('opt-left').innerText = `👈 ${q.options.left.text}`;
+        document.getElementById('opt-right').innerText = `👉 ${q.options.right.text}`;
     }
 
     function handleAnswer(direction) {
-        const q = questions[currentQ];
+        const q = i18n[currentLang].questions[currentQ];
         let choiceText = "";
+        const card = document.getElementById('question-card');
+        const overlay = document.getElementById('swipe-overlay');
         
         if(direction === 'up') { selectedScore = q.options.up.score; choiceText = q.options.up.text; card.style.transform = 'translateY(-150%)'; overlay.style.backgroundColor = 'rgba(52, 152, 219, 0.9)'; overlay.innerText = '👆'; }
         if(direction === 'down') { selectedScore = q.options.down.score; choiceText = q.options.down.text; card.style.transform = 'translateY(150%)'; overlay.style.backgroundColor = 'rgba(231, 76, 60, 0.9)'; overlay.innerText = '👇';}
@@ -407,12 +479,12 @@
         card.style.opacity = '0';
         totalScore += selectedScore;
         
-        // 準備詳解畫面內容
-        document.getElementById('exp-my-choice').innerText = `你的選擇：${choiceText} (+${selectedScore}分)`;
-        document.getElementById('exp-s-up').innerText = `👆 ${q.options.up.score}分：${q.options.up.text}`;
-        document.getElementById('exp-s-down').innerText = `👇 ${q.options.down.score}分：${q.options.down.text}`;
-        document.getElementById('exp-s-left').innerText = `👈 ${q.options.left.score}分：${q.options.left.text}`;
-        document.getElementById('exp-s-right').innerText = `👉 ${q.options.right.score}分：${q.options.right.text}`;
+        const dict = i18n[currentLang].ui;
+        document.getElementById('exp-my-choice').innerText = `${dict.yourChoice}：${choiceText} (+${selectedScore} ${dict.pts})`;
+        document.getElementById('exp-s-up').innerText = `👆 ${q.options.up.score} ${dict.pts}：${q.options.up.text}`;
+        document.getElementById('exp-s-down').innerText = `👇 ${q.options.down.score} ${dict.pts}：${q.options.down.text}`;
+        document.getElementById('exp-s-left').innerText = `👈 ${q.options.left.score} ${dict.pts}：${q.options.left.text}`;
+        document.getElementById('exp-s-right').innerText = `👉 ${q.options.right.score} ${dict.pts}：${q.options.right.text}`;
         document.getElementById('exp-content').innerText = q.explanation;
         
         setTimeout(() => {
@@ -433,27 +505,23 @@
         explanationScreen.style.display = 'none';
         endScreen.style.display = 'flex';
         
-        document.getElementById('final-score').innerText = totalScore + " 分";
+        const dict = i18n[currentLang].ui;
+        document.getElementById('final-score').innerText = totalScore + " " + dict.pts;
         
-        let title = "";
-        let desc = "";
+        const results = i18n[currentLang].results;
+        let finalTitle = results[3].title;
+        let finalDesc = results[3].desc;
         
-        if (totalScore >= 26) {
-            title = "🏆 神級掌舵手 (26-30分)";
-            desc = "太強了！你在極端壓力下依然能清晰判斷「安全➔核心➔品質」的優先順序。你懂得中斷高壓穩定情緒，並用強大的文化包容力建立信任。跟你出隊，再大的風暴都能平安度過！";
-        } else if (totalScore >= 18) {
-            title = "⭐ 潛力危機處理者 (18-25分)";
-            desc = "你具備很好的大局觀，能解決大部分的問題。但偶爾在遇到突發狀況時，還是會不小心陷入「先處理事，忘記處理人」的盲點，或者在文化溝通上稍微急躁了一些。再多一點好奇與陪伴，你會更無敵！";
-        } else if (totalScore >= 10) {
-            title = "⚠️ 燃燒殆盡的隊長 (10-17分)";
-            desc = "你非常有責任感，總是急著想把任務達成。但請記住，團隊最難的不是「做事」而是「一起做事」。太過執著於計畫進度，可能會讓你在無意間引發隊員的情緒爆炸，甚至踩到當地文化地雷喔。";
-        } else {
-            title = "💣 炎上製造機 (9分以下)";
-            desc = "哎呀！你的決策可能已經讓團隊士氣瓦解，甚至引發了嚴重的公關與安全危機。海外服務切記：絕對不要為了任務而犧牲安全與關係！遇到衝突，請在心裡默念三次：「先穩定、再理解、後協商」。";
+        for (let i = 0; i < results.length; i++) {
+            if (totalScore >= results[i].min) {
+                finalTitle = results[i].title;
+                finalDesc = results[i].desc;
+                break;
+            }
         }
         
-        document.getElementById('final-title').innerText = title;
-        document.getElementById('final-desc').innerText = desc;
+        document.getElementById('final-title').innerText = finalTitle;
+        document.getElementById('final-desc').innerText = finalDesc;
     }
 
     // 觸控邏輯
@@ -469,13 +537,10 @@
 
     swipeZone.addEventListener('touchend', e => {
         if(gameScreen.style.display !== 'flex') return;
-        
         let endX = e.changedTouches[0].screenX;
         let endY = e.changedTouches[0].screenY;
-        
         let diffX = endX - startX;
         let diffY = endY - startY;
-        
         if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX > 0) handleAnswer('right');
@@ -486,9 +551,6 @@
             }
         }
     });
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
