@@ -3,402 +3,895 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>海外志工幹部生存戰 | Overseas Volunteer Leader Survival</title>
+    <meta name="theme-color" content="#132238">
+    <title>海外志工領隊任務：5 關出發！</title>
     <style>
         :root {
-            --bg-color: #f4f7f6;
-            --primary-color: #2c3e50;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --swipe-up: #3498db;
-            --swipe-down: #e74c3c;
-            --swipe-left: #f39c12;
-            --swipe-right: #2ecc71;
+            --ink: #17243a;
+            --muted: #68758a;
+            --paper: #fffdf8;
+            --cream: #f5f0e8;
+            --navy: #132238;
+            --blue: #3c7ee8;
+            --teal: #22a892;
+            --orange: #ee9b35;
+            --pink: #e56b7a;
+            --line: #e8e2d8;
+            --shadow: 0 18px 40px rgba(24, 39, 64, .12);
         }
+
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            font-family: 'Helvetica Neue', Arial, 'LiHei Pro', sans-serif;
-            color: var(--text-main);
+            min-height: 100dvh;
+            background: #dfe9ed;
+            color: var(--ink);
+            font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
         }
 
+        button { font: inherit; }
+
         #app {
-            display: flex;
-            flex-direction: column;
-            height: 100dvh;
-            max-width: 500px;
+            width: 100%;
+            max-width: 540px;
+            min-height: 100dvh;
             margin: 0 auto;
-            background-color: var(--bg-color);
             position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(255,255,255,.8) 0 18%, transparent 39%),
+                var(--cream);
         }
 
         .screen {
-            flex: 1;
+            min-height: 100dvh;
+            padding: 28px 22px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
             text-align: center;
-            box-sizing: border-box;
         }
 
-        .screen h1 { font-size: 24px; color: var(--primary-color); margin-bottom: 10px; }
-        .screen p { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; text-align: left; }
-        
+        .screen[hidden], #game-screen[hidden], #explanation-screen[hidden] { display: none !important; }
+
+        .eyebrow, .mission-label {
+            margin: 0 0 10px;
+            color: var(--teal);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .14em;
+        }
+
+        .brand-mark {
+            width: 84px;
+            height: 84px;
+            display: grid;
+            place-items: center;
+            border-radius: 28px;
+            margin-bottom: 18px;
+            color: #fff;
+            font-size: 42px;
+            background: var(--navy);
+            box-shadow: 8px 8px 0 rgba(34, 168, 146, .24);
+            transform: rotate(-4deg);
+        }
+
+        h1, h2, p { margin-top: 0; }
+
+        .screen h1 {
+            max-width: 390px;
+            margin-bottom: 12px;
+            color: var(--navy);
+            font-size: clamp(27px, 7vw, 38px);
+            line-height: 1.18;
+            letter-spacing: -.04em;
+        }
+
+        .lead {
+            max-width: 410px;
+            margin-bottom: 24px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.75;
+        }
+
+        .language-card, .start-card {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .language-card p {
+            margin-bottom: 28px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
         .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 30px;
+            width: 100%;
+            border: 0;
+            border-radius: 16px;
+            padding: 15px 20px;
+            color: #fff;
+            background: var(--navy);
+            box-shadow: 0 8px 0 #091321, 0 12px 22px rgba(19,34,56,.15);
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 80%;
-            margin-bottom: 15px;
+            font-size: 17px;
+            font-weight: 900;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
         }
 
-        /* 遊戲畫面 */
-        #game-screen { display: none; flex-direction: column; height: 100%; padding: 15px; box-sizing: border-box; }
-        #progress { text-align: center; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; }
+        .btn + .btn { margin-top: 15px; }
+        .btn:hover { filter: brightness(1.08); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #091321, 0 8px 14px rgba(19,34,56,.12); }
+        .btn.secondary { color: var(--navy); background: #fff; box-shadow: 0 6px 0 #d9d1c7, 0 10px 18px rgba(19,34,56,.08); }
+        .btn.small { width: auto; padding: 10px 14px; font-size: 13px; box-shadow: 0 4px 0 #091321; }
 
-        #card-container { flex: 1; position: relative; z-index: 10; margin-bottom: 15px; min-height: 200px; }
-        .card {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--card-bg); border-radius: 15px; padding: 20px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1); overflow-y: auto; -webkit-overflow-scrolling: touch;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+        #start-screen { justify-content: flex-start; padding-top: 44px; }
+        #start-screen h1 { margin-bottom: 8px; }
+
+        .mission-preview {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 7px;
+            margin: 12px 0 26px;
         }
 
-        .scenario-title { font-size: 19px; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
-        .scenario-text { font-size: 15px; line-height: 1.6; }
-
-        /* 選項區 */
-        #swipe-zone { position: relative; background: rgba(255, 255, 255, 0.5); border-radius: 15px; padding: 10px; touch-action: none; }
-        .swipe-hint { text-align: center; font-size: 12px; color: #888; margin-bottom: 8px; }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
-
-        .opt {
-            font-size: 13px; padding: 12px 10px; border-radius: 10px; line-height: 1.4;
-            display: flex; align-items: center; color: white; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .opt:active { transform: scale(0.95); }
-        .opt.up { background-color: var(--swipe-up); grid-column: 1 / 3; justify-content: center;}
-        .opt.left { background-color: var(--swipe-left); }
-        .opt.right { background-color: var(--swipe-right); }
-        .opt.down { background-color: var(--swipe-down); grid-column: 1 / 3; justify-content: center;}
-
-        #swipe-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 50px; font-weight: bold; color: white; opacity: 0;
-            pointer-events: none; border-radius: 15px; transition: opacity 0.2s; z-index: 20;
+        .preview-item {
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 4px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(255,255,255,.74);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.3;
         }
 
-        /* 詳解畫面 */
-        #explanation-screen { display: none; flex-direction: column; height: 100%; padding: 20px; background: var(--card-bg); box-sizing: border-box; overflow-y: auto; }
-        .exp-title { font-size: 20px; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; text-align: center;}
-        .exp-score-box { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; margin-bottom: 20px; border-radius: 0 10px 10px 0;}
-        .exp-score-item { font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
-        .exp-my-choice { font-weight: bold; color: #e74c3c; font-size: 16px; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px;}
-        .exp-text { font-size: 15px; line-height: 1.6; color: var(--text-main); margin-bottom: 30px;}
-        
-        #final-score { font-size: 48px; color: var(--primary-color); font-weight: bold; margin: 10px 0; }
-        #final-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
-        #final-desc { font-size: 15px; color: var(--text-muted); padding: 0 10px; text-align: left; line-height: 1.6;}
+        .preview-item b { font-size: 23px; }
 
+        .rule-card {
+            width: 100%;
+            margin: 0 0 24px;
+            padding: 15px 17px;
+            border: 1px solid #ead8ae;
+            border-radius: 17px;
+            color: #76511b;
+            background: #fff5d7;
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        #game-screen, #explanation-screen {
+            min-height: 100dvh;
+            padding: 18px 18px 22px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .topbar-title {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .08em;
+        }
+
+        .score-pill {
+            padding: 7px 11px;
+            border-radius: 999px;
+            color: #fff;
+            background: var(--navy);
+            font-size: 12px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .progress-track {
+            height: 8px;
+            margin-bottom: 13px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e3ddd4;
+        }
+
+        .progress-bar {
+            width: 20%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--teal), var(--blue));
+            transition: width .35s ease;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .stat {
+            padding: 9px 10px 10px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(255,255,255,.72);
+        }
+
+        .stat-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .stat-value { color: var(--ink); }
+        .stat-track { height: 5px; border-radius: 99px; background: #e6e3dd; overflow: hidden; }
+        .stat-fill { width: 50%; height: 100%; border-radius: inherit; transition: width .4s ease; }
+        .stat.energy .stat-fill { background: var(--orange); }
+        .stat.safety .stat-fill { background: var(--blue); }
+        .stat.trust .stat-fill { background: var(--teal); }
+
+        .mission-card {
+            flex: 1;
+            min-height: 230px;
+            margin-bottom: 13px;
+            padding: 21px 20px 22px;
+            border: 1px solid rgba(255,255,255,.9);
+            border-radius: 24px;
+            background: var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .mission-card h2 {
+            margin-bottom: 13px;
+            color: var(--navy);
+            font-size: clamp(21px, 5.5vw, 28px);
+            line-height: 1.25;
+            letter-spacing: -.035em;
+        }
+
+        .mission-text {
+            margin: 0;
+            color: #465367;
+            font-size: 15px;
+            line-height: 1.75;
+            white-space: pre-line;
+        }
+
+        .choice-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 2px 8px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .hint-btn {
+            border: 0;
+            padding: 4px 0;
+            color: var(--orange);
+            background: transparent;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .hint-text {
+            display: none;
+            margin: 0 2px 9px;
+            padding: 8px 11px;
+            border-radius: 10px;
+            color: #77521b;
+            background: #fff3cc;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .hint-text.visible { display: block; }
+
+        .choices {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            touch-action: none;
+        }
+
+        .choice {
+            min-height: 74px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px 11px;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.45;
+            text-align: left;
+            box-shadow: 0 5px 0 rgba(0,0,0,.14);
+            transition: transform .13s ease, filter .13s ease, opacity .2s ease;
+        }
+
+        .choice:first-child { grid-column: 1 / 3; min-height: 62px; align-items: center; }
+        .choice:hover { filter: brightness(1.07); }
+        .choice:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.14); }
+        .choice:disabled { cursor: default; }
+        .choice.up { background: var(--blue); }
+        .choice.left { background: var(--orange); }
+        .choice.right { background: var(--teal); }
+        .choice.down { grid-column: 1 / 3; background: var(--pink); }
+        .choice-arrow { flex: 0 0 auto; font-size: 18px; line-height: 1.2; }
+
+        .swipe-note {
+            margin: 10px 0 0;
+            color: #929ba7;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .answer-flash {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: grid;
+            place-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .answer-flash.show { opacity: 1; }
+        .answer-flash span {
+            display: grid;
+            place-items: center;
+            width: 96px;
+            height: 96px;
+            border-radius: 28px;
+            color: #fff;
+            background: rgba(19,34,56,.94);
+            box-shadow: var(--shadow);
+            font-size: 42px;
+        }
+
+        #explanation-screen {
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .explanation-top {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .explanation-top .mission-label { margin: 0; }
+
+        .result-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 11px;
+            border-radius: 999px;
+            color: #fff;
+            background: var(--teal);
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .exp-card {
+            width: 100%;
+            padding: 21px;
+            border-radius: 23px;
+            color: var(--ink);
+            background: var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .exp-card h2 {
+            margin-bottom: 17px;
+            font-size: 23px;
+            line-height: 1.3;
+        }
+
+        .chosen {
+            margin-bottom: 17px;
+            padding: 13px 14px;
+            border-left: 4px solid var(--orange);
+            border-radius: 0 12px 12px 0;
+            color: #5e4c30;
+            background: #fff4d2;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        .impact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 20px;
+        }
+
+        .impact {
+            padding: 6px 9px;
+            border-radius: 999px;
+            background: #edf3f4;
+            color: #3d6062;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .exp-card h3 {
+            margin: 0 0 8px;
+            color: var(--teal);
+            font-size: 13px;
+            letter-spacing: .08em;
+        }
+
+        .exp-content {
+            margin-bottom: 22px;
+            color: #465367;
+            font-size: 15px;
+            line-height: 1.75;
+            white-space: pre-line;
+        }
+
+        .leader-note {
+            padding: 12px 14px;
+            border: 1px dashed #b6cbc7;
+            border-radius: 13px;
+            color: #33746b;
+            background: #eef9f4;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.6;
+        }
+
+        .next-wrap { width: 100%; margin-top: 18px; }
+
+        #end-screen { padding-top: 42px; justify-content: flex-start; }
+        .final-kicker { margin-bottom: 7px; color: var(--teal); font-weight: 900; letter-spacing: .12em; font-size: 12px; }
+        #final-score { margin: 5px 0 0; color: var(--navy); font-size: 61px; font-weight: 1000; letter-spacing: -.07em; }
+        .score-denom { color: var(--muted); font-size: 14px; font-weight: 800; }
+        #final-title { margin: 7px 0 12px; color: var(--navy); font-size: 25px; line-height: 1.3; }
+        #final-desc { max-width: 430px; margin-bottom: 20px; color: var(--muted); font-size: 15px; line-height: 1.75; }
+
+        .final-stats {
+            width: 100%;
+            max-width: 430px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 0 0 18px;
+        }
+
+        .final-stat {
+            padding: 10px 7px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: rgba(255,255,255,.75);
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .final-stat b { display: block; margin-top: 3px; color: var(--navy); font-size: 19px; }
+
+        .badges {
+            width: 100%;
+            max-width: 430px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 22px;
+        }
+
+        .badge {
+            min-height: 68px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 5px 2px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: #a8afb8;
+            background: rgba(255,255,255,.45);
+            font-size: 10px;
+            line-height: 1.25;
+        }
+
+        .badge b { font-size: 22px; filter: grayscale(1); opacity: .45; }
+        .badge.earned { border-color: #c9e5de; color: #33746b; background: #eef9f4; }
+        .badge.earned b { filter: none; opacity: 1; }
+
+        .final-rule {
+            max-width: 430px;
+            margin-bottom: 23px;
+            color: #76511b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .final-actions { width: 100%; max-width: 430px; }
+
+        @media (max-height: 720px) {
+            .mission-card { min-height: 170px; padding: 17px; }
+            .mission-card h2 { font-size: 21px; margin-bottom: 8px; }
+            .mission-text { font-size: 14px; line-height: 1.55; }
+            .choice { min-height: 62px; padding: 9px 10px; }
+            .choice:first-child { min-height: 52px; }
+            .choice.down { min-height: 58px; }
+            .screen { padding-top: 22px; padding-bottom: 22px; }
+        }
     </style>
 </head>
 <body>
+<main id="app">
+    <section id="language-screen" class="screen">
+        <div class="brand-mark">🧭</div>
+        <p class="eyebrow">OVERSEAS VOLUNTEER QUEST</p>
+        <h1>選擇你的任務語言</h1>
+        <div class="language-card">
+            <p>準備好帶著團隊完成 5 個現場任務了嗎？<br>Please choose a language to begin.</p>
+            <button class="btn" type="button" onclick="setLanguage('zh')">繁體中文</button>
+            <button class="btn secondary" type="button" onclick="setLanguage('en')">English</button>
+        </div>
+    </section>
 
-<div id="app">
-    <!-- 語言選擇頁 -->
-    <div id="language-screen" class="screen">
-        <h1>語言 / Language</h1>
-        <p style="text-align: center; margin-bottom: 40px;">請選擇您要使用的語言<br>Please select your language</p>
-        <button class="btn" onclick="setLanguage('zh')">繁體中文</button>
-        <button class="btn" onclick="setLanguage('en')">English</button>
-    </div>
+    <section id="start-screen" class="screen" hidden>
+        <div class="brand-mark">🧭</div>
+        <p class="eyebrow" id="ui-kicker">5 關・每關約 1 分鐘</p>
+        <h1 id="ui-title">海外志工領隊任務</h1>
+        <p class="lead" id="ui-desc"></p>
+        <div class="mission-preview" id="mission-preview"></div>
+        <div class="rule-card" id="ui-rule"></div>
+        <div class="start-card">
+            <button class="btn" id="ui-start-btn" type="button" onclick="startGame()">出發！</button>
+        </div>
+    </section>
 
-    <!-- 首頁 -->
-    <div id="start-screen" class="screen" style="display:none;">
-        <h1 id="ui-title">載入中...</h1>
-        <p id="ui-desc">載入中...</p>
-        <button class="btn" id="ui-start-btn" onclick="startGame()">開始</button>
-    </div>
-
-    <!-- 遊戲頁 -->
-    <div id="game-screen">
-        <div id="progress">1 / 8</div>
-        <div id="card-container">
-            <div id="question-card" class="card">
-                <div class="scenario-title" id="q-title"></div>
-                <div class="scenario-text" id="q-text"></div>
+    <section id="game-screen" hidden>
+        <div class="topbar">
+            <span class="topbar-title" id="progress">MISSION 01 / 05</span>
+            <span class="score-pill" id="score-pill">⭐ 0 分</span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="stats" aria-label="team status">
+            <div class="stat energy">
+                <div class="stat-head"><span id="stat-energy-label">⚡ 隊伍能量</span><span class="stat-value" id="energy-value">50</span></div>
+                <div class="stat-track"><div class="stat-fill" id="energy-fill"></div></div>
+            </div>
+            <div class="stat safety">
+                <div class="stat-head"><span id="stat-safety-label">🛡️ 安全雷達</span><span class="stat-value" id="safety-value">50</span></div>
+                <div class="stat-track"><div class="stat-fill" id="safety-fill"></div></div>
+            </div>
+            <div class="stat trust">
+                <div class="stat-head"><span id="stat-trust-label">🤝 信任值</span><span class="stat-value" id="trust-value">50</span></div>
+                <div class="stat-track"><div class="stat-fill" id="trust-fill"></div></div>
             </div>
         </div>
-        <div id="swipe-zone">
-            <div class="swipe-hint" id="ui-hint">💡 點擊選項或在方塊區滑動</div>
-            <div class="options-grid">
-                <div class="opt up" id="opt-up" onclick="handleAnswer('up')">👆 </div>
-                <div class="opt left" id="opt-left" onclick="handleAnswer('left')">👈 </div>
-                <div class="opt right" id="opt-right" onclick="handleAnswer('right')">👉 </div>
-                <div class="opt down" id="opt-down" onclick="handleAnswer('down')">👇 </div>
-            </div>
-            <div id="swipe-overlay"></div>
-        </div>
-    </div>
 
-    <!-- 詳解頁 -->
-    <div id="explanation-screen">
-        <div class="exp-title" id="ui-exp-title">決策解析</div>
-        <div class="exp-score-box">
-            <div class="exp-my-choice" id="exp-my-choice"></div>
-            <div class="exp-score-item" id="exp-s-up"></div>
-            <div class="exp-score-item" id="exp-s-down"></div>
-            <div class="exp-score-item" id="exp-s-left"></div>
-            <div class="exp-score-item" id="exp-s-right"></div>
-        </div>
-        <div class="exp-text" id="exp-content"></div>
-        <div style="text-align: center;">
-            <button class="btn" id="ui-next-btn" onclick="nextQuestion()">下一題</button>
-        </div>
-    </div>
+        <article class="mission-card">
+            <p class="mission-label" id="mission-label">MISSION 01</p>
+            <h2 id="q-title"></h2>
+            <p class="mission-text" id="q-text"></p>
+        </article>
 
-    <!-- 結算頁 -->
-    <div id="end-screen" class="screen" style="display:none;">
-        <h1 id="ui-end-title">評估結果</h1>
+        <div class="choice-heading">
+            <span id="ui-choice-label">選一個行動</span>
+            <button class="hint-btn" id="hint-btn" type="button" onclick="showHint()">💡 <span id="ui-hint-btn">給我提示</span></button>
+        </div>
+        <p class="hint-text" id="hint-text"></p>
+        <div class="choices" id="choices">
+            <button class="choice up" id="opt-up" type="button" onclick="handleAnswer('up')"><span class="choice-arrow">👆</span><span></span></button>
+            <button class="choice left" id="opt-left" type="button" onclick="handleAnswer('left')"><span class="choice-arrow">👈</span><span></span></button>
+            <button class="choice right" id="opt-right" type="button" onclick="handleAnswer('right')"><span class="choice-arrow">👉</span><span></span></button>
+            <button class="choice down" id="opt-down" type="button" onclick="handleAnswer('down')"><span class="choice-arrow">👇</span><span></span></button>
+        </div>
+        <p class="swipe-note" id="ui-swipe-note">也可以在選項區滑動作答</p>
+    </section>
+
+    <section id="explanation-screen" hidden>
+        <div class="explanation-top">
+            <p class="mission-label" id="exp-mission-label">MISSION 01 COMPLETE</p>
+            <span class="result-stamp" id="result-stamp">+3 ⭐</span>
+        </div>
+        <article class="exp-card">
+            <h2 id="ui-exp-title">任務回顧</h2>
+            <div class="chosen" id="exp-my-choice"></div>
+            <div class="impact-row" id="impact-row"></div>
+            <h3 id="ui-principle-label">這關的領隊筆記</h3>
+            <p class="exp-content" id="exp-content"></p>
+            <div class="leader-note" id="leader-note"></div>
+        </article>
+        <div class="next-wrap">
+            <button class="btn" id="ui-next-btn" type="button" onclick="nextQuestion()">下一關</button>
+        </div>
+    </section>
+
+    <section id="end-screen" class="screen" hidden>
+        <p class="final-kicker" id="ui-end-kicker">MISSION COMPLETE</p>
+        <h1 id="ui-end-title">全隊抵達終點！</h1>
         <div id="final-score">0</div>
+        <div class="score-denom" id="score-denom">/ 15 分</div>
         <div id="final-title"></div>
         <p id="final-desc"></p>
-        <button class="btn" id="ui-retry-btn" onclick="location.reload()">重新挑戰</button>
-    </div>
-</div>
+        <div class="final-stats">
+            <div class="final-stat"><span id="final-energy-label">⚡ 隊伍能量</span><b id="final-energy">50</b></div>
+            <div class="final-stat"><span id="final-safety-label">🛡️ 安全雷達</span><b id="final-safety">50</b></div>
+            <div class="final-stat"><span id="final-trust-label">🤝 信任值</span><b id="final-trust">50</b></div>
+        </div>
+        <div class="badges" id="badges"></div>
+        <p class="final-rule" id="final-rule"></p>
+        <div class="final-actions">
+            <button class="btn" id="ui-retry-btn" type="button" onclick="restartGame()">再跑一次</button>
+            <button class="btn secondary" id="ui-language-btn" type="button" onclick="backToLanguage()">換個語言</button>
+        </div>
+    </section>
+
+    <div class="answer-flash" id="answer-flash"><span id="flash-icon">🧭</span></div>
+</main>
 
 <script>
+    const missionIcons = ['🧊', '🛡️', '🍵', '🧩', '🌱'];
+
     const i18n = {
         zh: {
             ui: {
-                title: "海外志工幹部生存戰",
-                desc: "這是一場真實的海外專案模擬。遇到暴走隊員、雷包夥伴或突發危機，你的每一個決定，都在考驗你對「優先順序」的判斷。<br><br>👉 <b>規則：</b> 請在四個看似都有道理的選項中，選出最適合當下的處置方式。滑動選項或直接點擊皆可作答。",
-                startBtn: "開始挑戰",
-                hint: "💡 點擊選項，或在方塊區滑動作答",
-                expTitle: "決策解析",
-                yourChoice: "你的選擇",
-                nextBtn: "下一題",
-                endTitle: "評估結果",
-                retryBtn: "重新挑戰",
-                pts: "分"
+                kicker: '5 關・每關約 1 分鐘',
+                title: '海外志工領隊任務',
+                desc: '你不是來考滿分的，而是要把安全、團隊和在地夥伴一起帶到終點。每一關選一個你會採取的行動，看看你的領隊雷達如何運作。',
+                rule: '🎯 小規則：先看情境，再選行動。沒有「完美隊長」，但每個選擇都會改變隊伍狀態。',
+                startBtn: '出發！',
+                choiceLabel: '選一個行動',
+                hintBtn: '給我提示',
+                hintUsed: '提示已開啟',
+                swipeNote: '也可以在選項區滑動作答',
+                score: '⭐ {n} 分',
+                progress: 'MISSION {n} / {total}',
+                mission: 'MISSION {n}',
+                complete: 'MISSION {n} COMPLETE',
+                expTitle: '任務回顧',
+                principleLabel: '這關的領隊筆記',
+                nextBtn: '下一關',
+                nextFinish: '看最終結果',
+                points: '+{n} 分',
+                chosen: '你選擇：{text}',
+                impact: '{label} {n}',
+                endKicker: 'MISSION COMPLETE',
+                endTitle: '全隊抵達終點！',
+                denom: '/ 15 分',
+                retryBtn: '再跑一次',
+                languageBtn: '換個語言',
+                energy: '⚡ 隊伍能量',
+                safety: '🛡️ 安全雷達',
+                trust: '🤝 信任值',
+                finalRule: '帶走這句：先顧安全，先接住人，再一起找方法。',
+                badgeEarned: '已解鎖',
+                badgeLocked: '再接近一點',
+                preview: ['穩住人心', '先顧安全', '讀懂文化', '變出方案', '留下能力']
             },
+            previewIcons: ['🧊', '🛡️', '🍵', '🧩', '🌱'],
             questions: [
                 {
-                    title: "倒數12小時的剪刀手",
-                    text: "距離明天活動剩12小時。負責整理教材的隊員A突然把剪刀一摔，崩潰大喊：「為什麼每次都是我跟B在做？其他人憑什麼都在聊天！」C回嘴：「可是你們動作比較快啊。」現場氣氛降到冰點。身為幹部，你開口的第一句話會是什麼？",
+                    title: '剪刀放下了，先救火還是先救人？',
+                    text: '活動前一晚，A 把剪刀放下，崩潰地說：「為什麼每次都是我跟 B 在做？」旁邊的隊員開始互相瞪眼。你會先做什麼？',
+                    hint: '情緒正在升高時，先讓現場少一點刺激。',
+                    principle: '先降溫，再談分工。高壓時直接講效率，通常只會讓人更防衛；先把人帶離現場、喝口水、喘口氣，才有機會真的解決工作問題。',
+                    note: '領隊不是立刻把所有事情做完的人，而是讓大家重新有力氣一起做的人。',
+                    badge: '穩場王',
                     options: {
-                        up: { text: "大家先安靜，我們現在立刻重新分配剩下的工作。", score: 0 },
-                        down: { text: "A，你先放下剪刀跟我到外面走走。大家先休息十分鐘。", score: 3 },
-                        left: { text: "A，你現在覺得很不公平對嗎？我們來談談。", score: 2 },
-                        right: { text: "C，請你先不要說話。A你先去旁邊休息，我來做。", score: 1 }
-                    },
-                    explanation: "【先穩定 ➔ 再理解】\n在極端高壓下發生情緒爆發，最危險的不是「教材做不完」，而是「人際與情緒」。直接切入分配工作(0分)只會引發防衛心；當面探討情緒(2分)容易讓當事人下不了台；直接護航(1分)會產生新的對立。\n最佳解是「中斷高壓環境」，先把人帶離現場降溫，穩定後再來協商。"
+                        up: { text: '先請大家重新分工，把進度拉回來。', score: 1, effects: { energy: -3, safety: 0, trust: -4 } },
+                        down: { text: '請 A 跟我出去走兩分鐘，大家先喝水休息。', score: 3, effects: { energy: 10, safety: 1, trust: 7 } },
+                        left: { text: '當著大家問 A：「你是不是覺得很不公平？」', score: 2, effects: { energy: 3, safety: 0, trust: 3 } },
+                        right: { text: '直接接手所有工作，請 A 先休息。', score: 1, effects: { energy: 2, safety: 0, trust: -2 } }
+                    }
                 },
                 {
-                    title: "早晨7:30的完美風暴",
-                    text: "海外服務最後一天早上，四個狀況同時發生：\n① 隊員突發急性腸胃炎狂吐\n② 司機通知車壞了要等1小時\n③ 當地夥伴打來要求加開30人活動\n④ 另一名隊員崩潰大哭說不想幹了\n請問你「最優先」的動作是什麼？",
+                    title: '先停一下，才是最快的路',
+                    text: '活動開始前，一名孩子跌倒擦傷流血。隊員說：「先讓人帶他去旁邊，活動不能停！」但你還不知道附近的就醫方式，也不確定孩子需不需要進一步處理。',
+                    hint: '問自己：如果判斷錯了，哪一種錯誤最不能承受？',
+                    principle: '安全是底線，不是加分題。先暫停、穩定現場、確認傷勢與可靠的在地協助，再決定活動怎麼調整，才是負責任的速度。',
+                    note: '真正厲害的領隊，敢在大家都催進度時按下暫停鍵。',
+                    badge: '安全雷達',
                     options: {
-                        up: { text: "馬上安撫崩潰的隊員，避免團隊士氣全面瓦解。", score: 2 },
-                        down: { text: "回絕當地夥伴，告訴他們我們現在遇到大麻煩了。", score: 1 },
-                        left: { text: "召集還清醒的人緊急站會，一人認領一件事情去處理。", score: 0 },
-                        right: { text: "立刻把腸胃炎隊員帶去旁邊確認生命徵象與就醫路線。", score: 3 }
-                    },
-                    explanation: "【資源排序：安全絕對優先】\n危機處理的第一口訣是 S(安全)。人員生病屬於實質的醫療與安全風險，絕對優先於「團隊情緒(人)」、「外部關係(關係)」與「活動進度(任務)」。在確保醫療安全前，開會分工只會延誤救援時機。"
+                        up: { text: '請隊員先把孩子扶到旁邊，其他活動照常。', score: 1, effects: { energy: 2, safety: -8, trust: -2 } },
+                        down: { text: '暫停活動、確認傷勢，立刻找可靠的就醫資訊。', score: 3, effects: { energy: -1, safety: 14, trust: 5 } },
+                        left: { text: '請當地夥伴全權處理，我們先把流程帶完。', score: 1, effects: { energy: 1, safety: -5, trust: -4 } },
+                        right: { text: '直接取消所有行程，大家原地等待消息。', score: 2, effects: { energy: -6, safety: 8, trust: 1 } }
+                    }
                 },
                 {
-                    title: "被消失的歲數",
-                    text: "團隊在當地進行健康檢查建檔。但當地夥伴總是不願填寫表單上的「年齡」欄位，隊員跑來跟你抱怨：「他們真的很沒效率又不受控，這會導致我們數據報表無法連貫。」",
+                    title: '遲到的不是一杯茶',
+                    text: '約好的集合時間過了 15 分鐘，當地夥伴還在和社區長輩喝茶聊天。台灣隊員開始抱怨：「這樣很浪費時間！」你會怎麼接住這個現場？',
+                    hint: '這段聊天，可能正在完成你看不見的哪一件事？',
+                    principle: '在不同文化裡，閒聊可能是建立信任、交換近況與確認合作關係的重要儀式。先加入、觀察並問清楚，再一起確認接下來的時間表，通常比直接催促更有效。',
+                    note: '有時候，關係不是任務之外的事，而是任務能不能順利發生的基礎。',
+                    badge: '在地連線',
                     options: {
-                        up: { text: "告訴隊員，用目測身高來推估年齡填上去就好。", score: 1 },
-                        down: { text: "去找當地夥伴，堅持這是合約規範，一定要問到歲數。", score: 0 },
-                        left: { text: "私下問當地夥伴：「請問你們平時是怎麼記錄孩子成長的？」", score: 3 },
-                        right: { text: "把年齡欄位直接刪掉，但私下抱怨當地人很難溝通。", score: 2 }
-                    },
-                    explanation: "【好奇取代評價】\n很多我們覺得理所當然的事（例如知道自己幾歲），在當地可能根本沒有這個概念。用目測(1分)或強求(0分)都是把自身文化強加於人。最好的方式是帶著「好奇心」去理解在地脈絡，找出他們原本的運作方式。"
+                        up: { text: '嚴肅重申我們的時間表與效率要求。', score: 0, effects: { energy: -3, safety: 0, trust: -8 } },
+                        down: { text: '叫隊員先滑手機休息，等他們聊完再說。', score: 1, effects: { energy: -2, safety: 0, trust: -3 } },
+                        left: { text: '先走過去坐下，問候長輩，再和夥伴確認開始時間。', score: 3, effects: { energy: 6, safety: 1, trust: 12 } },
+                        right: { text: '跳過當地夥伴，帶台灣隊員先自己開始。', score: 1, effects: { energy: 1, safety: 0, trust: -7 } }
+                    }
                 },
                 {
-                    title: "資源枯竭的對立",
-                    text: "由於預算控管失誤，活動材料少了三分之一。隊員X提議：「反正當地孩子最後也會把作品丟掉，簡單帶過就好。」隊員Y聽了暴怒：「我們準備這麼久，不能半途而廢！」",
+                    title: '少了三分之一的材料',
+                    text: '活動材料臨時少了三分之一。X 說：「反正孩子最後也會丟掉，簡單帶過就好。」Y 卻很生氣：「我們準備這麼久，不能半途而廢！」你會把團隊帶向哪裡？',
+                    hint: '先保住「所有人都能參與」這件事，再決定哪些細節可以放下。',
+                    principle: '資源不足時，先抓住核心任務：讓每個孩子都有參與的機會。重新設計流程、降低單份材料量，通常比自掏腰包或把資源集中給少數人更公平。',
+                    note: '好方案不一定最精緻，但要能讓更多人一起完成。',
+                    badge: '變通達人',
                     options: {
-                        up: { text: "引導雙方討論我們來這裡服務的初衷，找回意義。", score: 1 },
-                        down: { text: "斥責X的態度不正確，我們應該自掏腰包買齊材料。", score: 0 },
-                        left: { text: "緊急修改教案，降低每個人的材料使用量，確保大家都能玩到。", score: 3 },
-                        right: { text: "把材料集中給表現比較好的孩子，其他人用畫畫代替。", score: 2 }
-                    },
-                    explanation: "【任務品質 vs 核心精神】\n資源不足不代表活動失敗。當下的重點是「解決事」，空談初衷(1分)緩不濟急，自掏腰包(0分)剝削團隊。幹部應果斷犧牲「活動的精緻度(品質)」，來確保「所有孩子都能參與(核心任務)」。"
+                        up: { text: '先談服務初衷，請大家找回意義再說。', score: 1, effects: { energy: 2, safety: 0, trust: 1 } },
+                        down: { text: '要求大家自掏腰包，把材料補齊。', score: 0, effects: { energy: -8, safety: 0, trust: -2 } },
+                        left: { text: '立刻改教案，減少每份用量，讓所有人都能玩到。', score: 3, effects: { energy: 8, safety: 1, trust: 6 } },
+                        right: { text: '把材料集中給表現最好的孩子，其他人改畫畫。', score: 1, effects: { energy: -1, safety: 0, trust: -6 } }
+                    }
                 },
                 {
-                    title: "遲到的 8:45",
-                    text: "我們習慣：準時集合 ➔ 快速分工 ➔ 立即執行。但要求8:30集合，到了8:45，當地夥伴還在悠哉地跟社區長輩喝茶聊天。台灣隊員覺得這是在浪費時間，怒氣值正在上升。",
+                    title: '最後一天，真的要說再見嗎？',
+                    text: '專案最後一天，學弟妹問你：「我們離開後，孩子就沒人帶活動了，這樣真的有意義嗎？」你會怎麼讓這趟服務留下下一步？',
+                    hint: '想想看：誰最有機會在我們離開後繼續做下去？',
+                    principle: '一次活動可以帶來感動，但把方法交給在地的人，才有機會延續影響。評估和當地老師或關鍵夥伴共同設計簡單、能重複使用的活動，是更長久的做法。',
+                    note: '最好的結束，不是讓大家捨不得離開，而是讓在地夥伴有信心接著走。',
+                    badge: '永續種子',
                     options: {
-                        up: { text: "嚴肅地向當地負責人重申我們的時間表與效率要求。", score: 0 },
-                        down: { text: "安撫隊員，自己走過去坐下來，接過茶杯加入聊天。", score: 3 },
-                        left: { text: "跳過當地夥伴，指揮台灣團隊自己先開始動手做。", score: 1 },
-                        right: { text: "請隊員去旁邊滑手機休息，等他們聊完再叫我們。", score: 2 }
-                    },
-                    explanation: "【跨文化理解與在地尊重】\n在許多地方，活動前的「閒聊」是確認家庭狀況、建立信任的重要儀式，不是沒效率。強押時間表(0分)或自己蠻幹(1分)都會破壞深層的權力與信任關係。放下成見融入其中，才是真正與在地協作。"
-                },
-                {
-                    title: "場地突發被借走",
-                    text: "晚上8點，當地夥伴傳 LINE 通知：「明天場地被村長借走，活動必須延後到下午。」隊員聽到後氣炸覺得不被尊重。此時當地夥伴正在線上等你回覆。",
-                    options: {
-                        up: { text: "先跟隊員說：「大家先發洩十分鐘，我懂這很煩。」", score: 3 },
-                        down: { text: "立刻回覆當地夥伴：「沒問題，我們會配合。」再回頭安撫隊員。", score: 1 },
-                        left: { text: "回覆當地夥伴：「這違反合約，請你們去跟村長協調。」", score: 0 },
-                        right: { text: "先同理隊員情緒，但要求大家立刻開會想出下午的備案。", score: 2 }
-                    },
-                    explanation: "【內部情緒優先於外部回應】\n當內部強烈的情緒爆發時，如果幹部第一時間選擇「妥協於外部(1分)」，隊員會覺得被背叛，產生內部對立。必須先接住隊員的情緒(提供情緒價值)，穩定後再進行外部協商。"
-                },
-                {
-                    title: "服務對象的擴展",
-                    text: "專案前期評估時，學弟妹跑來問你：「學長，我們去那邊帶國小生辦活動，但我們走後他們就沒人帶了，這樣真的有意義嗎？」",
-                    options: {
-                        up: { text: "「志工本來就是做自己開心的，盡力就好，不要想太多。」", score: 0 },
-                        down: { text: "「或許我們可以評估，把部分服務對象擴展到當地的『老師』。」", score: 3 },
-                        left: { text: "「所以我們要把活動辦得更精緻，讓他們一輩子難忘。」", score: 1 },
-                        right: { text: "「我們可以多留一些文具跟物資給他們，彌補遺憾。」", score: 2 }
-                    },
-                    explanation: "【專案需求評估與延續性】\n服務專案不能只靠熱情。表單數據與「延續性」比單次活動重要。要擴大打擊面，服務對象不一定只能是學生，培力在地教師或關鍵利害關係人，才是讓專案長久落地的關鍵。"
-                },
-                {
-                    title: "突發意外的底線",
-                    text: "大地遊戲中，一名孩子跌倒流血。隊員表示：「活動不能停，讓別人扶他去旁邊就好，我們繼續帶進度。」但你不知道最近的醫院在哪，當地夥伴也狀況外。",
-                    options: {
-                        up: { text: "同意隊員，活動繼續，避免現場上百個孩子失控。", score: 0 },
-                        down: { text: "先暫停活動，穩定現場，並立刻向當地確認可靠的就醫資訊。", score: 3 },
-                        left: { text: "請在地夥伴全權負責處理，我們專心把任務執行完畢。", score: 1 },
-                        right: { text: "強制取消後面所有行程，直到受傷事件釐清為止。", score: 2 }
-                    },
-                    explanation: "【絕對不要為了任務犧牲安全】\n當「任務進度」與「潛在安全風險」發生衝突時，底線永遠是安全。即便只有一個人受傷，在未確認可靠醫療資訊與擬定下一步之前，盲目推進活動(0分、1分)是嚴重的失職。"
+                        up: { text: '告訴大家志工盡力就好，不要想太多。', score: 0, effects: { energy: 0, safety: 0, trust: -4 } },
+                        down: { text: '把活動做得更華麗，讓孩子一輩子記得。', score: 1, effects: { energy: -3, safety: 0, trust: 2 } },
+                        left: { text: '留下更多物資，彌補我們離開後的空缺。', score: 2, effects: { energy: 1, safety: 1, trust: 4 } },
+                        right: { text: '和當地老師一起設計一套能繼續使用的簡單活動。', score: 3, effects: { energy: 6, safety: 2, trust: 10 } }
+                    }
                 }
             ],
             results: [
-                { min: 21, title: "🏆 神級掌舵手 (21-24分)", desc: "太強了！你在極端壓力下依然能清晰判斷「安全➔核心➔品質」的優先順序。你懂得中斷高壓穩定情緒，並用強大的文化包容力建立信任。跟你出隊，再大的風暴都能平安度過！" },
-                { min: 15, title: "⭐ 潛力危機處理者 (15-20分)", desc: "你具備很好的大局觀，能解決大部分的問題。但偶爾在遇到突發狀況時，還是會不小心陷入「先處理事，忘記處理人」的盲點，或者在文化溝通上稍微急躁了一些。再多一點好奇與陪伴，你會更無敵！" },
-                { min: 9, title: "⚠️ 燃燒殆盡的隊長 (9-14分)", desc: "你非常有責任感，總是急著想把任務達成。但請記住，團隊最難的不是「做事」而是「一起做事」。太過執著於計畫進度，可能會讓你在無意間引發隊員的情緒爆炸，甚至踩到當地文化地雷喔。" },
-                { min: 0, title: "💣 炎上製造機 (8分以下)", desc: "哎呀！你的決策可能已經讓團隊士氣瓦解，甚至引發了嚴重的公關與安全危機。海外服務切記：絕對不要為了任務而犧牲安全與關係！遇到衝突，請在心裡默念三次：「先穩定、再理解、後協商」。" }
+                { min: 13, title: '🏆 穩穩帶隊的神隊長', desc: '你能在混亂中抓住真正重要的事：先顧安全、先接住人，再和夥伴一起找方法。這種領隊不只把活動完成，也讓團隊願意再一起出發。' },
+                { min: 10, title: '⭐ 很有料的潛力隊長', desc: '你的大方向很不錯，已經能看見安全、情緒和在地關係。下一步是練習在「想趕快解決」之前，多留一點空間給人和現場。' },
+                { min: 6, title: '🧭 正在升級的實戰隊長', desc: '你很有責任感，也願意把事情扛起來。記得：領隊不是一個人變快，而是讓整隊找到可以一起前進的方法。' },
+                { min: 0, title: '🌱 帶著好奇心再出發', desc: '你可能會在壓力下急著救進度，但這正是最值得練習的地方。下一次先停三秒，問自己：「現在最需要被照顧的是什麼？」' }
             ]
         },
         en: {
             ui: {
-                title: "Overseas Volunteer Leader Survival",
-                desc: "This is a realistic project simulation. Facing emotional teammates, unpredictable partners, and sudden crises, every decision tests your ability to prioritize.<br><br>👉 <b>Rule:</b> Choose the most appropriate action from four seemingly reasonable options. Tap or swipe to answer.",
-                startBtn: "Start Challenge",
-                hint: "💡 Tap an option or swipe in this box",
-                expTitle: "Decision Analysis",
-                yourChoice: "Your Choice",
-                nextBtn: "Next Question",
-                endTitle: "Assessment Result",
-                retryBtn: "Play Again",
-                pts: "pts"
+                kicker: '5 missions · about 1 minute each',
+                title: 'Overseas Volunteer Leader Quest',
+                desc: 'You are not here to chase a perfect score. Your job is to get safety, the team, and local partners to the finish line together. Choose one action per mission and see how your leader radar works.',
+                rule: '🎯 Quick rule: Read the scene, choose an action. There is no perfect captain, but every choice changes the team status.',
+                startBtn: 'Let’s go!',
+                choiceLabel: 'Choose an action',
+                hintBtn: 'Give me a hint',
+                hintUsed: 'Hint opened',
+                swipeNote: 'You can also swipe in the choice area',
+                score: '⭐ {n} pts',
+                progress: 'MISSION {n} / {total}',
+                mission: 'MISSION {n}',
+                complete: 'MISSION {n} COMPLETE',
+                expTitle: 'Mission debrief',
+                principleLabel: 'Leader note for this mission',
+                nextBtn: 'Next mission',
+                nextFinish: 'See final result',
+                points: '+{n} pts',
+                chosen: 'You chose: {text}',
+                impact: '{label} {n}',
+                endKicker: 'MISSION COMPLETE',
+                endTitle: 'The whole team made it!',
+                denom: '/ 15 pts',
+                retryBtn: 'Run it again',
+                languageBtn: 'Change language',
+                energy: '⚡ Team energy',
+                safety: '🛡️ Safety radar',
+                trust: '🤝 Trust',
+                finalRule: 'Take this with you: protect safety, hold the people, then find a way together.',
+                badgeEarned: 'Unlocked',
+                badgeLocked: 'Almost there',
+                preview: ['Stabilize', 'Safety first', 'Read culture', 'Adapt', 'Sustain']
             },
+            previewIcons: ['🧊', '🛡️', '🍵', '🧩', '🌱'],
             questions: [
                 {
-                    title: "The Scissors at T-minus 12 Hours",
-                    text: "12 hours until the event. Teammate A, organizing materials, suddenly throws down the scissors and yells: 'Why is it always me and B working while others just chat?' C replies: 'Because you guys are faster.' The atmosphere freezes. As the leader, what is your FIRST response?",
+                    title: 'The scissors are down. What comes first?',
+                    text: 'The night before the event, A drops the scissors and breaks down: “Why is it always me and B doing the work?” Teammates start staring at one another. What do you do first?',
+                    hint: 'When emotions are rising, first reduce the stimulation around the people involved.',
+                    principle: 'Stabilize first, then redistribute work. Talking about efficiency in a high-stress moment usually triggers defensiveness. Give the person room to breathe, then solve the task together.',
+                    note: 'A leader is not the person who finishes everything alone; it is the person who helps the team regain the energy to finish together.',
+                    badge: 'Calm captain',
                     options: {
-                        up: { text: "Everyone quiet. Let's immediately reassign the remaining work.", score: 0 },
-                        down: { text: "A, put the scissors down and walk outside with me. Everyone, 10-minute break.", score: 3 },
-                        left: { text: "A, you feel this is very unfair right now, don't you? Let's talk.", score: 2 },
-                        right: { text: "C, please don't speak. A, go rest, I will finish the work.", score: 1 }
-                    },
-                    explanation: "[First Stabilize ➔ Then Understand]\nUnder extreme stress, the biggest risk is not 'unfinished tasks' but 'interpersonal emotions'. Reassigning work immediately (0 pts) triggers defensiveness; discussing feelings publicly (2 pts) causes embarrassment. The best solution is to interrupt the high-stress environment, take the person away to cool down, and negotiate later."
+                        up: { text: 'Reassign the work immediately and pull the schedule back on track.', score: 1, effects: { energy: -3, safety: 0, trust: -4 } },
+                        down: { text: 'Walk outside with A for two minutes and give everyone a water break.', score: 3, effects: { energy: 10, safety: 1, trust: 7 } },
+                        left: { text: 'Ask A in front of everyone: “Do you feel this is unfair?”', score: 2, effects: { energy: 3, safety: 0, trust: 3 } },
+                        right: { text: 'Take over all the work and tell A to rest.', score: 1, effects: { energy: 2, safety: 0, trust: -2 } }
+                    }
                 },
                 {
-                    title: "The 7:30 AM Perfect Storm",
-                    text: "Last morning of service. Four things happen at once:\n1. A teammate gets acute gastroenteritis and is vomiting.\n2. The driver says the bus broke down (1hr delay).\n3. Local partners call demanding an extra activity for 30 kids.\n4. Another teammate breaks down crying and wants to quit.\nWhat is your ABSOLUTE priority?",
+                    title: 'Stopping is the fastest route',
+                    text: 'Before the activity starts, a child falls and is bleeding from a scrape. A teammate says, “Have someone take them aside; we cannot stop!” You do not know the local medical process or how serious it is.',
+                    hint: 'Ask yourself: if you guess wrong, which mistake would be hardest to undo?',
+                    principle: 'Safety is a baseline, not a bonus. Pause, stabilize the scene, assess the injury, and confirm reliable local support before deciding how to adapt the activity.',
+                    note: 'A strong leader is willing to press pause when everyone else is pushing for speed.',
+                    badge: 'Safety radar',
                     options: {
-                        up: { text: "Comfort the crying teammate to prevent total morale collapse.", score: 2 },
-                        down: { text: "Reject the local partner, explaining we are in big trouble.", score: 1 },
-                        left: { text: "Hold an emergency meeting to assign tasks to awake members.", score: 0 },
-                        right: { text: "Immediately isolate the sick teammate, check vitals, and plan medical transport.", score: 3 }
-                    },
-                    explanation: "[Resource Prioritization: Safety First]\nThe core crisis management rule is Safety. Illness is a real medical risk, taking absolute priority over 'team emotions', 'external relationships', and 'task progress'. Having a meeting (0 pts) delays critical rescue time."
+                        up: { text: 'Have a teammate move the child aside while the activity continues.', score: 1, effects: { energy: 2, safety: -8, trust: -2 } },
+                        down: { text: 'Pause, assess the injury, and get reliable local medical information.', score: 3, effects: { energy: -1, safety: 14, trust: 5 } },
+                        left: { text: 'Let the local partners handle it while we finish the program.', score: 1, effects: { energy: 1, safety: -5, trust: -4 } },
+                        right: { text: 'Cancel every remaining activity and wait for the full report.', score: 2, effects: { energy: -6, safety: 8, trust: 1 } }
+                    }
                 },
                 {
-                    title: "The Missing Age",
-                    text: "During health checks, local partners refuse to fill in the 'Age' column. Your teammate complains: 'They are so inefficient and uncontrollable. Our data reports will be ruined.'",
+                    title: 'It is more than a cup of tea',
+                    text: 'Fifteen minutes after the agreed meeting time, local partners are still having tea with community elders. Your Taiwan team complains, “This is such a waste of time!” How do you hold the moment?',
+                    hint: 'What invisible task might this conversation be completing?',
+                    principle: 'In different cultures, informal conversation can build trust, exchange context, and confirm relationships. Join, observe, and ask about the start time before pushing a shared schedule.',
+                    note: 'Sometimes relationships are not outside the task; they are the foundation that lets the task happen.',
+                    badge: 'Local connector',
                     options: {
-                        up: { text: "Tell the team to just estimate the age by height and fill it in.", score: 1 },
-                        down: { text: "Go to the local partner and insist this is a contract requirement.", score: 0 },
-                        left: { text: "Privately ask the locals: 'How do you usually track children's growth here?'", score: 3 },
-                        right: { text: "Delete the age column, but complain privately about the locals.", score: 2 }
-                    },
-                    explanation: "[Curiosity Over Judgment]\nThings we take for granted (like knowing one's age) might not exist locally. Estimating (1 pt) or forcing it (0 pts) imposes your culture on them. The best approach is using 'curiosity' to understand their local context and existing systems."
+                        up: { text: 'Strictly restate our schedule and efficiency expectations.', score: 0, effects: { energy: -3, safety: 0, trust: -8 } },
+                        down: { text: 'Tell the team to use their phones until the conversation ends.', score: 1, effects: { energy: -2, safety: 0, trust: -3 } },
+                        left: { text: 'Sit down, greet the elders, then confirm the start time with partners.', score: 3, effects: { energy: 6, safety: 1, trust: 12 } },
+                        right: { text: 'Skip the local partners and start with the Taiwan team alone.', score: 1, effects: { energy: 1, safety: 0, trust: -7 } }
+                    }
                 },
                 {
-                    title: "Conflict Over Depleted Resources",
-                    text: "Due to a budget error, materials are short by 1/3. Teammate X says: 'Kids will throw the crafts away anyway, just do a sloppy version.' Teammate Y explodes: 'We prepared so hard, we can't half-ass this!'",
+                    title: 'A third of the materials is gone',
+                    text: 'The activity materials are suddenly short by one third. X says, “The kids will throw them away anyway; let us do a sloppy version.” Y is furious: “We worked too hard to give up!” Where do you take the team?',
+                    hint: 'Protect “everyone gets to participate” first, then decide which details can be released.',
+                    principle: 'When resources are short, protect the core mission: everyone should have a chance to participate. Redesign the activity and reduce the amount per person instead of paying out of pocket or excluding some children.',
+                    note: 'A good solution does not have to be the most elaborate; it has to let more people finish together.',
+                    badge: 'Adaptation ace',
                     options: {
-                        up: { text: "Guide them to discuss our original intention of volunteering to find meaning.", score: 1 },
-                        down: { text: "Scold X and demand the team pay out of pocket for more materials.", score: 0 },
-                        left: { text: "Urgently modify the lesson plan, reducing material per kid so all can play.", score: 3 },
-                        right: { text: "Give materials to the best-behaved kids; the rest can just draw.", score: 2 }
-                    },
-                    explanation: "[Quality vs. Core Mission]\nResource shortage doesn't mean failure. The priority is 'solving the problem'. Talking about intentions (1 pt) is too slow; paying out of pocket (0 pts) exploits the team. A leader should sacrifice 'activity refinement (Quality)' to ensure 'all children can participate (Core Mission)'."
+                        up: { text: 'Discuss our service purpose and find the meaning before acting.', score: 1, effects: { energy: 2, safety: 0, trust: 1 } },
+                        down: { text: 'Ask everyone to pay out of pocket and replace the materials.', score: 0, effects: { energy: -8, safety: 0, trust: -2 } },
+                        left: { text: 'Redesign the lesson now, using less per person so everyone can join.', score: 3, effects: { energy: 8, safety: 1, trust: 6 } },
+                        right: { text: 'Give the materials to the best-behaved children and let the rest draw.', score: 1, effects: { energy: -1, safety: 0, trust: -6 } }
+                    }
                 },
                 {
-                    title: "The 8:45 AM Tardiness",
-                    text: "We expect: Gather on time ➔ Assign ➔ Execute. Meeting time was 8:30. At 8:45, local partners are still casually drinking tea with community elders. The Taiwan team feels this is a waste of time and is getting angry.",
+                    title: 'Is the last day really goodbye?',
+                    text: 'On the final day, a junior asks: “After we leave, nobody will run activities for the children. Does this really matter?” How do you leave a next step behind?',
+                    hint: 'Who is most able to continue the work after we leave?',
+                    principle: 'A one-time activity can create a moving moment, but sharing the method with local people creates continuity. Co-designing a simple, repeatable activity with local teachers or key partners can extend the impact.',
+                    note: 'The best ending is not making people afraid to say goodbye; it is helping local partners feel ready to continue.',
+                    badge: 'Seed planter',
                     options: {
-                        up: { text: "Strictly reiterate our schedule and efficiency requirements to the locals.", score: 0 },
-                        down: { text: "Calm the team, walk over, sit down, and join the tea chat.", score: 3 },
-                        left: { text: "Ignore the locals and command the Taiwan team to start working alone.", score: 1 },
-                        right: { text: "Tell the team to rest and use their phones until the locals finish chatting.", score: 2 }
-                    },
-                    explanation: "[Cultural Respect]\nIn many places, 'small talk' before an event is a crucial ritual to build trust, not inefficiency. Forcing schedules (0 pts) or acting alone (1 pt) destroys underlying trust. Dropping prejudice and blending in is true local collaboration."
-                },
-                {
-                    title: "Sudden Venue Requisition",
-                    text: "At 8 PM, local partners text: 'The village chief took the venue for tomorrow. Activity must be delayed until afternoon.' Your team is furious about the disrespect. The local partner is waiting online for your reply.",
-                    options: {
-                        up: { text: "Tell the team: 'Vent for 10 mins, I know this is super annoying.'", score: 3 },
-                        down: { text: "Reply 'No problem' to locals immediately, then pacify the team.", score: 1 },
-                        left: { text: "Reply: 'This breaks the contract, go negotiate with the chief.'", score: 0 },
-                        right: { text: "Empathize with the team, but demand an immediate backup plan meeting.", score: 2 }
-                    },
-                    explanation: "[Internal Emotions > External Response]\nWhen intense internal emotions (fatigue, feeling deprived) erupt, compromising externally first (1 pt) makes the team feel betrayed. You must catch the team's emotions first (provide emotional value), stabilize them, and then handle external negotiations."
-                },
-                {
-                    title: "Expanding the Target Audience",
-                    text: "During project prep, a junior asks: 'We run camps for elementary kids, but when we leave, nobody guides them. Is this really meaningful?'",
-                    options: {
-                        up: { text: "'Volunteering is just about doing our best and having fun, don't overthink it.'", score: 0 },
-                        down: { text: "'Maybe we can evaluate expanding our service to empower the local teachers.'", score: 3 },
-                        left: { text: "'That's why we need to make the camp so exquisite they remember it forever.'", score: 1 },
-                        right: { text: "'We can leave more stationery and supplies behind to compensate.'", score: 2 }
-                    },
-                    explanation: "[Needs Assessment & Continuity]\nService projects can't run on passion alone. 'Continuity' is more important than a single event. Empowering local teachers or key stakeholders is the crucial step to ensure the project has a lasting, sustainable impact."
-                },
-                {
-                    title: "The Bottom Line of Emergencies",
-                    text: "During a field game, a child falls and bleeds. A teammate says: 'The game can't stop. Let someone else help him, we must continue the schedule.' You don't know where the nearest hospital is, and local partners seem confused.",
-                    options: {
-                        up: { text: "Agree. Continue the game to prevent hundreds of kids from losing control.", score: 0 },
-                        down: { text: "Pause the game, stabilize the scene, and demand reliable medical info from locals.", score: 3 },
-                        left: { text: "Let local partners handle it entirely while we focus on finishing our tasks.", score: 1 },
-                        right: { text: "Force-cancel all remaining schedules until the injury is fully investigated.", score: 2 }
-                    },
-                    explanation: "[Never Sacrifice Safety for Tasks]\nWhen 'task progress' conflicts with 'potential safety risks', the bottom line is ALWAYS safety. Even if it's just one injury, blindly pushing the activity forward (0 pts, 1 pt) without confirming reliable medical information and determining the next steps is a severe dereliction of duty."
+                        up: { text: 'Tell everyone volunteering is about doing their best; do not overthink it.', score: 0, effects: { energy: 0, safety: 0, trust: -4 } },
+                        down: { text: 'Make the activity more spectacular so the children remember it forever.', score: 1, effects: { energy: -3, safety: 0, trust: 2 } },
+                        left: { text: 'Leave extra supplies behind to fill the gap after we leave.', score: 2, effects: { energy: 1, safety: 1, trust: 4 } },
+                        right: { text: 'Co-design a simple activity with local teachers that they can keep using.', score: 3, effects: { energy: 6, safety: 2, trust: 10 } }
+                    }
                 }
             ],
             results: [
-                { min: 21, title: "🏆 God-Tier Helmsman (21-24 pts)", desc: "Amazing! Under extreme pressure, you clearly prioritize 'Safety ➔ Core ➔ Quality'. You know how to interrupt high stress to stabilize emotions and use strong cultural tolerance to build trust. Anyone would feel safe and purposeful on your team!" },
-                { min: 15, title: "⭐ Potential Crisis Manager (15-20 pts)", desc: "You have a great big-picture view and can solve most problems. However, in emergencies, you might fall into the trap of 'fixing the task, forgetting the people', or act slightly too hasty in cultural communication. A bit more empathy and curiosity will make you invincible!" },
-                { min: 9, title: "⚠️ Burned-Out Captain (9-14 pts)", desc: "You are highly responsible and eager to complete tasks. But remember, the hardest part of a team isn't 'working', it's 'working TOGETHER'. Obsessing over schedule progress might unintentionally trigger emotional explosions in your team or step on cultural landmines." },
-                { min: 0, title: "💣 PR Disaster Generator (0-8 pts)", desc: "Oh no! Your decisions likely caused team morale collapse or severe safety/PR crises. Remember: NEVER sacrifice safety and relationships for the sake of tasks! When conflict arises, chant this 3 times: 'First Stabilize, Then Understand, Finally Negotiate'." }
+                { min: 13, title: '🏆 Steady team captain', desc: 'You spot what matters in the mess: protect safety, hold the people, then find a way with partners. You do not just complete an event; you make the team want to depart together again.' },
+                { min: 10, title: '⭐ Promising crisis leader', desc: 'Your big-picture instincts are strong. You already notice safety, emotions, and local relationships. The next level is leaving a little more room for people and context before rushing to fix things.' },
+                { min: 6, title: '🧭 Field leader in progress', desc: 'You take responsibility and are willing to carry the load. Remember: leadership is not becoming faster alone; it is helping the whole team find a way forward together.' },
+                { min: 0, title: '🌱 Start again with curiosity', desc: 'Under pressure, you may rush to save the schedule. That is exactly what is worth practicing. Next time, pause for three seconds and ask: “What needs care most right now?”' }
             ]
         }
     };
@@ -406,151 +899,237 @@
     let currentLang = 'zh';
     let currentQ = 0;
     let totalScore = 0;
-    let selectedScore = 0;
+    let answered = false;
+    let hintUsed = false;
+    let stats = { energy: 50, safety: 50, trust: 50 };
+    let history = [];
 
-    const languageScreen = document.getElementById('language-screen');
-    const startScreen = document.getElementById('start-screen');
-    const gameScreen = document.getElementById('game-screen');
-    const explanationScreen = document.getElementById('explanation-screen');
-    const endScreen = document.getElementById('end-screen');
-    
+    const el = id => document.getElementById(id);
+    const clamp = value => Math.max(0, Math.min(100, value));
+    const format = (template, values) => template.replace(/\{(\w+)\}/g, (_, key) => values[key] ?? '');
+
+    function showOnly(id) {
+        ['language-screen', 'start-screen', 'game-screen', 'explanation-screen', 'end-screen'].forEach(screenId => {
+            el(screenId).hidden = screenId !== id;
+        });
+    }
+
     function setLanguage(lang) {
         currentLang = lang;
         const dict = i18n[lang].ui;
-        
-        document.getElementById('ui-title').innerText = dict.title;
-        document.getElementById('ui-desc').innerHTML = dict.desc;
-        document.getElementById('ui-start-btn').innerText = dict.startBtn;
-        document.getElementById('ui-hint').innerText = dict.hint;
-        document.getElementById('ui-exp-title').innerText = dict.expTitle;
-        document.getElementById('ui-next-btn').innerText = dict.nextBtn;
-        document.getElementById('ui-end-title').innerText = dict.endTitle;
-        document.getElementById('ui-retry-btn').innerText = dict.retryBtn;
-        
-        languageScreen.style.display = 'none';
-        startScreen.style.display = 'flex';
+        document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+        el('ui-kicker').innerText = dict.kicker;
+        el('ui-title').innerText = dict.title;
+        el('ui-desc').innerHTML = dict.desc;
+        el('ui-rule').innerText = dict.rule;
+        el('ui-start-btn').innerText = dict.startBtn;
+        el('ui-choice-label').innerText = dict.choiceLabel;
+        el('ui-hint-btn').innerText = dict.hintBtn;
+        el('ui-swipe-note').innerText = dict.swipeNote;
+        el('ui-exp-title').innerText = dict.expTitle;
+        el('ui-principle-label').innerText = dict.principleLabel;
+        el('ui-next-btn').innerText = dict.nextBtn;
+        el('ui-end-kicker').innerText = dict.endKicker;
+        el('ui-end-title').innerText = dict.endTitle;
+        el('score-denom').innerText = dict.denom;
+        el('ui-retry-btn').innerText = dict.retryBtn;
+        el('ui-language-btn').innerText = dict.languageBtn;
+        ['energy', 'safety', 'trust'].forEach(stat => {
+            el('stat-' + stat + '-label').innerText = dict[stat];
+            el('final-' + stat + '-label').innerText = dict[stat];
+        });
+
+        const preview = el('mission-preview');
+        preview.innerHTML = '';
+        dict.preview.forEach((label, index) => {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            item.innerHTML = '<b>' + i18n[lang].previewIcons[index] + '</b><span>' + label + '</span>';
+            preview.appendChild(item);
+        });
+        showOnly('start-screen');
+    }
+
+    function resetState() {
+        currentQ = 0;
+        totalScore = 0;
+        answered = false;
+        hintUsed = false;
+        stats = { energy: 50, safety: 50, trust: 50 };
+        history = [];
     }
 
     function startGame() {
-        startScreen.style.display = 'none';
-        gameScreen.style.display = 'flex';
-        currentQ = 0;
-        totalScore = 0;
+        resetState();
+        showOnly('game-screen');
         loadQuestion();
     }
 
+    function restartGame() {
+        startGame();
+    }
+
+    function backToLanguage() {
+        showOnly('language-screen');
+    }
+
+    function updateStats() {
+        Object.keys(stats).forEach(key => {
+            const value = Math.round(stats[key]);
+            el(key + '-value').innerText = value;
+            el(key + '-fill').style.width = value + '%';
+            el('final-' + key).innerText = value;
+        });
+    }
+
+    function setChoiceText(id, text) {
+        el(id).querySelector('span:last-child').innerText = text;
+    }
+
     function loadQuestion() {
-        const questions = i18n[currentLang].questions;
-        if (currentQ >= questions.length) {
-            endGame();
-            return;
-        }
-        
-        const card = document.getElementById('question-card');
-        const overlay = document.getElementById('swipe-overlay');
-        card.style.transform = 'translate(0, 0)';
-        card.style.opacity = '1';
-        overlay.style.opacity = '0';
-        
-        const q = questions[currentQ];
-        let qPrefix = currentLang === 'zh' ? `第 ${currentQ + 1} / ${questions.length} 題` : `Question ${currentQ + 1} / ${questions.length}`;
-        document.getElementById('progress').innerText = qPrefix;
-        document.getElementById('q-title').innerText = q.title;
-        document.getElementById('q-text').innerText = q.text;
-        
-        document.getElementById('opt-up').innerText = `👆 ${q.options.up.text}`;
-        document.getElementById('opt-down').innerText = `👇 ${q.options.down.text}`;
-        document.getElementById('opt-left').innerText = `👈 ${q.options.left.text}`;
-        document.getElementById('opt-right').innerText = `👉 ${q.options.right.text}`;
+        const data = i18n[currentLang];
+        const dict = data.ui;
+        const q = data.questions[currentQ];
+        answered = false;
+        hintUsed = false;
+        el('hint-text').classList.remove('visible');
+        el('hint-btn').disabled = false;
+        el('hint-btn').style.opacity = '1';
+        el('ui-hint-btn').innerText = dict.hintBtn;
+        el('hint-text').innerText = '💡 ' + q.hint;
+        el('progress').innerText = format(dict.progress, { n: currentQ + 1, total: data.questions.length });
+        el('mission-label').innerText = format(dict.mission, { n: String(currentQ + 1).padStart(2, '0') });
+        el('progress-bar').style.width = (((currentQ + 1) / data.questions.length) * 100) + '%';
+        el('score-pill').innerText = format(dict.score, { n: totalScore });
+        el('q-title').innerText = q.title;
+        el('q-text').innerText = q.text;
+        setChoiceText('opt-up', q.options.up.text);
+        setChoiceText('opt-left', q.options.left.text);
+        setChoiceText('opt-right', q.options.right.text);
+        setChoiceText('opt-down', q.options.down.text);
+        ['opt-up', 'opt-left', 'opt-right', 'opt-down'].forEach(id => {
+            el(id).disabled = false;
+            el(id).style.opacity = '1';
+        });
+        updateStats();
+    }
+
+    function showHint() {
+        if (hintUsed) return;
+        hintUsed = true;
+        el('hint-text').classList.add('visible');
+        el('hint-btn').disabled = true;
+        el('hint-btn').style.opacity = '.6';
+        el('ui-hint-btn').innerText = i18n[currentLang].ui.hintUsed;
+    }
+
+    function impactText(label, change) {
+        const dict = i18n[currentLang].ui;
+        const sign = change > 0 ? '+' : '';
+        return format(dict.impact, { label: label, n: sign + change });
     }
 
     function handleAnswer(direction) {
-        const q = i18n[currentLang].questions[currentQ];
-        let choiceText = "";
-        const card = document.getElementById('question-card');
-        const overlay = document.getElementById('swipe-overlay');
-        
-        if(direction === 'up') { selectedScore = q.options.up.score; choiceText = q.options.up.text; card.style.transform = 'translateY(-150%)'; overlay.style.backgroundColor = 'rgba(52, 152, 219, 0.9)'; overlay.innerText = '👆'; }
-        if(direction === 'down') { selectedScore = q.options.down.score; choiceText = q.options.down.text; card.style.transform = 'translateY(150%)'; overlay.style.backgroundColor = 'rgba(231, 76, 60, 0.9)'; overlay.innerText = '👇';}
-        if(direction === 'left') { selectedScore = q.options.left.score; choiceText = q.options.left.text; card.style.transform = 'translateX(-150%)'; overlay.style.backgroundColor = 'rgba(243, 156, 18, 0.9)'; overlay.innerText = '👈';}
-        if(direction === 'right') { selectedScore = q.options.right.score; choiceText = q.options.right.text; card.style.transform = 'translateX(150%)'; overlay.style.backgroundColor = 'rgba(46, 204, 113, 0.9)'; overlay.innerText = '👉';}
-
-        overlay.style.opacity = '1';
-        card.style.opacity = '0';
-        totalScore += selectedScore;
-        
-        const dict = i18n[currentLang].ui;
-        document.getElementById('exp-my-choice').innerText = `${dict.yourChoice}：${choiceText} (+${selectedScore} ${dict.pts})`;
-        document.getElementById('exp-s-up').innerText = `👆 ${q.options.up.score} ${dict.pts}：${q.options.up.text}`;
-        document.getElementById('exp-s-down').innerText = `👇 ${q.options.down.score} ${dict.pts}：${q.options.down.text}`;
-        document.getElementById('exp-s-left').innerText = `👈 ${q.options.left.score} ${dict.pts}：${q.options.left.text}`;
-        document.getElementById('exp-s-right').innerText = `👉 ${q.options.right.score} ${dict.pts}：${q.options.right.text}`;
-        document.getElementById('exp-content').innerText = q.explanation;
-        
+        if (answered) return;
+        const data = i18n[currentLang];
+        const q = data.questions[currentQ];
+        const choice = q.options[direction];
+        if (!choice) return;
+        answered = true;
+        totalScore += choice.score;
+        Object.keys(stats).forEach(key => {
+            stats[key] = clamp(stats[key] + choice.effects[key]);
+        });
+        history.push({ score: choice.score, badge: q.badge, direction: direction, effects: choice.effects });
+        ['opt-up', 'opt-left', 'opt-right', 'opt-down'].forEach(id => {
+            el(id).disabled = true;
+            if (id !== 'opt-' + direction) el(id).style.opacity = '.45';
+        });
+        updateStats();
+        el('score-pill').innerText = format(data.ui.score, { n: totalScore });
+        el('flash-icon').innerText = missionIcons[currentQ];
+        el('answer-flash').classList.add('show');
         setTimeout(() => {
-            gameScreen.style.display = 'none';
-            explanationScreen.style.display = 'flex';
-        }, 300);
+            el('answer-flash').classList.remove('show');
+            showExplanation(choice, q);
+        }, 350);
+    }
+
+    function showExplanation(choice, q) {
+        const dict = i18n[currentLang].ui;
+        el('exp-mission-label').innerText = format(dict.complete, { n: String(currentQ + 1).padStart(2, '0') });
+        el('result-stamp').innerText = format(dict.points, { n: choice.score });
+        el('exp-my-choice').innerText = format(dict.chosen, { text: choice.text });
+        el('impact-row').innerHTML = '';
+        const labels = { energy: dict.energy, safety: dict.safety, trust: dict.trust };
+        Object.keys(choice.effects).forEach(key => {
+            if (choice.effects[key] !== 0) {
+                const chip = document.createElement('span');
+                chip.className = 'impact';
+                chip.innerText = impactText(labels[key], choice.effects[key]);
+                el('impact-row').appendChild(chip);
+            }
+        });
+        el('exp-content').innerText = q.principle;
+        el('leader-note').innerText = '📝 ' + q.note;
+        el('ui-next-btn').innerText = currentQ === dataLength() - 1 ? dict.nextFinish : dict.nextBtn;
+        showOnly('explanation-screen');
+    }
+
+    function dataLength() {
+        return i18n[currentLang].questions.length;
     }
 
     function nextQuestion() {
-        explanationScreen.style.display = 'none';
-        gameScreen.style.display = 'flex';
         currentQ++;
+        if (currentQ >= dataLength()) {
+            endGame();
+            return;
+        }
+        showOnly('game-screen');
         loadQuestion();
     }
 
     function endGame() {
-        gameScreen.style.display = 'none';
-        explanationScreen.style.display = 'none';
-        endScreen.style.display = 'flex';
-        
-        const dict = i18n[currentLang].ui;
-        document.getElementById('final-score').innerText = totalScore + " " + dict.pts;
-        
-        const results = i18n[currentLang].results;
-        let finalTitle = results[3].title;
-        let finalDesc = results[3].desc;
-        
-        for (let i = 0; i < results.length; i++) {
-            if (totalScore >= results[i].min) {
-                finalTitle = results[i].title;
-                finalDesc = results[i].desc;
-                break;
-            }
-        }
-        
-        document.getElementById('final-title').innerText = finalTitle;
-        document.getElementById('final-desc').innerText = finalDesc;
+        const data = i18n[currentLang];
+        const dict = data.ui;
+        const result = data.results.find(item => totalScore >= item.min) || data.results[data.results.length - 1];
+        el('final-score').innerText = totalScore;
+        el('final-title').innerText = result.title;
+        el('final-desc').innerText = result.desc;
+        el('final-rule').innerText = '🎒 ' + dict.finalRule;
+        el('score-denom').innerText = dict.denom;
+        el('badges').innerHTML = '';
+        history.forEach((item, index) => {
+            const badge = document.createElement('div');
+            badge.className = 'badge' + (item.score >= 2 ? ' earned' : '');
+            badge.title = item.score >= 2 ? dict.badgeEarned : dict.badgeLocked;
+            badge.innerHTML = '<b>' + missionIcons[index] + '</b><span>' + data.questions[index].badge + '</span>';
+            el('badges').appendChild(badge);
+        });
+        updateStats();
+        showOnly('end-screen');
     }
 
-    // 觸控邏輯
-    const swipeZone = document.getElementById('swipe-zone');
+    const choices = el('choices');
     let startX = 0;
     let startY = 0;
-    const threshold = 40; 
-
-    swipeZone.addEventListener('touchstart', e => {
-        startX = e.changedTouches[0].screenX;
-        startY = e.changedTouches[0].screenY;
-    }, {passive: false});
-
-    swipeZone.addEventListener('touchend', e => {
-        if(gameScreen.style.display !== 'flex') return;
-        let endX = e.changedTouches[0].screenX;
-        let endY = e.changedTouches[0].screenY;
-        let diffX = endX - startX;
-        let diffY = endY - startY;
-        if (Math.abs(diffX) > threshold || Math.abs(diffY) > threshold) {
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX > 0) handleAnswer('right');
-                else handleAnswer('left');
-            } else {
-                if (diffY > 0) handleAnswer('down');
-                else handleAnswer('up');
-            }
+    choices.addEventListener('touchstart', event => {
+        startX = event.changedTouches[0].screenX;
+        startY = event.changedTouches[0].screenY;
+    }, { passive: true });
+    choices.addEventListener('touchend', event => {
+        if (answered) return;
+        const dx = event.changedTouches[0].screenX - startX;
+        const dy = event.changedTouches[0].screenY - startY;
+        const threshold = 45;
+        if (Math.abs(dx) < threshold && Math.abs(dy) < threshold) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            handleAnswer(dx > 0 ? 'right' : 'left');
+        } else {
+            handleAnswer(dy > 0 ? 'down' : 'up');
         }
-    });
+    }, { passive: true });
 </script>
 </body>
 </html>
